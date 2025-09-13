@@ -1,0 +1,10 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "type": "response",
+  "result": {"success": true},
+  "error": {
+    "code": -32603,
+    "message": "Internal error"
+  }
+}

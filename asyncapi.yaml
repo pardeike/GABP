@@ -1,0 +1,308 @@
+asyncapi: 3.0.0
+info:
+  title: GABP Events
+  version: 1.0.0
+  description: |
+    AsyncAPI specification for GABP (Game Agent Bridge Protocol) events.
+    
+    This specification describes the event channels available in GABP for 
+    real-time communication between game mods and automation bridges.
+  contact:
+    name: GABP Maintainers
+    url: https://github.com/pardeike/GABP
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+defaultContentType: application/json
+
+channels:
+  events:
+    address: 'events/{channel}'
+    title: GABP Event Channel
+    description: Generic event channel for GABP events
+    parameters:
+      channel:
+        description: The event channel name (e.g., 'player/move', 'world/block_change')
+        schema:
+          type: string
+          pattern: '^[a-z]+(/[a-z_]+)*$'
+          examples:
+            - 'player/move'
+            - 'world/block_change'
+            - 'inventory/update'
+    messages:
+      eventMessage:
+        $ref: '#/components/messages/EventMessage'
+
+  'player/move':
+    address: 'player/move'
+    title: Player Movement Events
+    description: Events triggered when players move in the game world
+    messages:
+      playerMoveEvent:
+        $ref: '#/components/messages/PlayerMoveEvent'
+
+  'world/block_change':
+    address: 'world/block_change'
+    title: World Block Change Events
+    description: Events triggered when blocks are placed, broken, or modified
+    messages:
+      blockChangeEvent:
+        $ref: '#/components/messages/BlockChangeEvent'
+
+  'inventory/update':
+    address: 'inventory/update'
+    title: Inventory Update Events
+    description: Events triggered when player inventories change
+    messages:
+      inventoryUpdateEvent:
+        $ref: '#/components/messages/InventoryUpdateEvent'
+
+operations:
+  subscribeToEvents:
+    action: receive
+    channel:
+      $ref: '#/channels/events'
+    summary: Subscribe to GABP events
+    description: |
+      Receive events from subscribed channels. Events are delivered in sequence
+      order per channel using the `seq` field.
+
+components:
+  messages:
+    EventMessage:
+      name: EventMessage
+      title: GABP Event Message
+      summary: Base GABP event message format
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/EventMessage'
+
+    PlayerMoveEvent:
+      name: PlayerMoveEvent
+      title: Player Movement Event
+      summary: Player position and movement update
+      contentType: application/json
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventMessage'
+          - type: object
+            properties:
+              channel:
+                const: 'player/move'
+              payload:
+                $ref: '#/components/schemas/PlayerMovePayload'
+
+    BlockChangeEvent:
+      name: BlockChangeEvent
+      title: Block Change Event
+      summary: World block modification event
+      contentType: application/json
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventMessage'
+          - type: object
+            properties:
+              channel:
+                const: 'world/block_change'
+              payload:
+                $ref: '#/components/schemas/BlockChangePayload'
+
+    InventoryUpdateEvent:
+      name: InventoryUpdateEvent
+      title: Inventory Update Event
+      summary: Player inventory change event
+      contentType: application/json
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/EventMessage'
+          - type: object
+            properties:
+              channel:
+                const: 'inventory/update'
+              payload:
+                $ref: '#/components/schemas/InventoryUpdatePayload'
+
+  schemas:
+    EventMessage:
+      type: object
+      title: GABP Event Message
+      description: Base schema for all GABP event messages
+      required:
+        - v
+        - id
+        - type
+        - channel
+        - seq
+        - payload
+      properties:
+        v:
+          type: string
+          const: 'gabp/1'
+          description: Protocol version identifier
+        id:
+          type: string
+          format: uuid
+          description: Unique event identifier
+        type:
+          type: string
+          const: 'event'
+          description: Message type
+        channel:
+          type: string
+          minLength: 1
+          description: Event channel name
+        seq:
+          type: integer
+          minimum: 0
+          description: Sequence number for this channel
+        payload:
+          type: object
+          description: Event-specific data
+        timestamp:
+          type: string
+          format: date-time
+          description: Optional ISO 8601 timestamp when event occurred
+      additionalProperties: false
+
+    PlayerMovePayload:
+      type: object
+      title: Player Movement Payload
+      description: Data payload for player movement events
+      required:
+        - playerId
+        - position
+      properties:
+        playerId:
+          type: string
+          description: Unique player identifier
+        position:
+          type: object
+          required: [x, y, z]
+          properties:
+            x:
+              type: number
+              description: X coordinate
+            y:
+              type: number
+              description: Y coordinate
+            z:
+              type: number
+              description: Z coordinate
+          additionalProperties: false
+        velocity:
+          type: object
+          properties:
+            x:
+              type: number
+              description: X velocity component
+            y:
+              type: number  
+              description: Y velocity component
+            z:
+              type: number
+              description: Z velocity component
+          additionalProperties: false
+        rotation:
+          type: object
+          properties:
+            yaw:
+              type: number
+              minimum: -180
+              maximum: 180
+              description: Yaw rotation in degrees
+            pitch:
+              type: number
+              minimum: -90
+              maximum: 90
+              description: Pitch rotation in degrees
+          additionalProperties: false
+      additionalProperties: false
+
+    BlockChangePayload:
+      type: object
+      title: Block Change Payload
+      description: Data payload for block change events
+      required:
+        - position
+        - action
+      properties:
+        position:
+          type: object
+          required: [x, y, z]
+          properties:
+            x:
+              type: integer
+              description: Block X coordinate
+            y:
+              type: integer
+              description: Block Y coordinate
+            z:
+              type: integer
+              description: Block Z coordinate
+          additionalProperties: false
+        action:
+          type: string
+          enum: [place, break, replace]
+          description: Type of block change
+        oldBlockType:
+          type: string
+          description: Previous block type (for break/replace actions)
+        newBlockType:
+          type: string
+          description: New block type (for place/replace actions)
+        playerId:
+          type: string
+          description: Player who caused the change (if applicable)
+        tool:
+          type: string
+          description: Tool used for the action (if applicable)
+      additionalProperties: false
+
+    InventoryUpdatePayload:
+      type: object
+      title: Inventory Update Payload
+      description: Data payload for inventory update events
+      required:
+        - playerId
+        - action
+      properties:
+        playerId:
+          type: string
+          description: Player whose inventory changed
+        action:
+          type: string
+          enum: [add, remove, move, update]
+          description: Type of inventory change
+        slot:
+          type: integer
+          minimum: 0
+          description: Inventory slot number
+        item:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Item type identifier
+            count:
+              type: integer
+              minimum: 0
+              description: Number of items
+            metadata:
+              type: object
+              description: Item-specific metadata
+          additionalProperties: false
+        previousItem:
+          type: object
+          description: Previous item in slot (for replace actions)
+          properties:
+            type:
+              type: string
+            count:
+              type: integer
+              minimum: 0
+            metadata:
+              type: object
+          additionalProperties: false
+      additionalProperties: false
