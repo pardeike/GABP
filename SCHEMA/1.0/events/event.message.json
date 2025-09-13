@@ -1,0 +1,42 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/events/event.message.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GABP Event Message",
+  "description": "Schema for GABP event messages",
+  "type": "object",
+  "required": ["v", "id", "type", "channel", "seq", "payload"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique event identifier"
+    },
+    "type": {
+      "const": "event",
+      "description": "Message type"
+    },
+    "channel": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Event channel name"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Sequence number for this channel"
+    },
+    "payload": {
+      "description": "Event-specific data payload"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional ISO 8601 timestamp when event occurred"
+    }
+  },
+  "additionalProperties": false
+}

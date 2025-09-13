@@ -1,0 +1,51 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/common/tool.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GABP Tool Definition",
+  "description": "Schema for tool metadata and capability information",
+  "type": "object",
+  "required": ["name", "title", "description", "inputSchema", "outputSchema"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9_.-]+$",
+      "description": "Unique tool identifier"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable tool title"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Detailed tool description"
+    },
+    "inputSchema": {
+      "type": "object",
+      "description": "JSON Schema for tool input parameters"
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "JSON Schema for tool output format"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Optional tags for categorization"
+    },
+    "deprecated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this tool is deprecated"
+    },
+    "version": {
+      "type": "string",
+      "description": "Tool version identifier"
+    }
+  },
+  "additionalProperties": false
+}

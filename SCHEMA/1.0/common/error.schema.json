@@ -1,0 +1,23 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/common/error.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GABP Error Object",
+  "description": "Standard error object for GABP responses",
+  "type": "object",
+  "required": ["code", "message"],
+  "properties": {
+    "code": {
+      "type": "integer",
+      "description": "Numeric error code following JSON-RPC and GABP conventions"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable error message"
+    },
+    "data": {
+      "description": "Additional error-specific data"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,53 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/tools.list.request.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tools/list Request",
+  "description": "Request schema for listing available tools",
+  "type": "object",
+  "required": ["v", "id", "type", "method"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique request identifier"
+    },
+    "type": {
+      "const": "request",
+      "description": "Message type"
+    },
+    "method": {
+      "const": "tools/list",
+      "description": "Method name"
+    },
+    "params": {
+      "type": "object",
+      "properties": {
+        "filter": {
+          "type": "object",
+          "properties": {
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Filter by tool tags"
+            },
+            "namePattern": {
+              "type": "string",
+              "description": "Filter by tool name pattern (glob)"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Optional filtering criteria"
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    }
+  },
+  "additionalProperties": false
+}

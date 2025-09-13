@@ -1,0 +1,132 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/envelope.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GABP Envelope 1.0",
+  "description": "Base envelope schema for all GABP messages",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/request" },
+    { "$ref": "#/$defs/response" },
+    { "$ref": "#/$defs/event" }
+  ],
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID v4 identifier"
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "Numeric error code"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable error message"
+        },
+        "data": {
+          "description": "Additional error-specific data"
+        }
+      },
+      "additionalProperties": false
+    },
+    "request": {
+      "type": "object",
+      "required": ["v", "id", "type", "method"],
+      "properties": {
+        "v": {
+          "const": "gabp/1",
+          "description": "Protocol version identifier"
+        },
+        "id": {
+          "$ref": "#/$defs/uuid",
+          "description": "Unique request identifier"
+        },
+        "type": {
+          "const": "request",
+          "description": "Message type"
+        },
+        "method": {
+          "type": "string",
+          "pattern": "^[a-z]+(/[a-z]+)+$",
+          "description": "Method name to invoke"
+        },
+        "params": {
+          "type": "object",
+          "default": {},
+          "description": "Method parameters"
+        }
+      },
+      "additionalProperties": false
+    },
+    "response": {
+      "type": "object",
+      "required": ["v", "id", "type"],
+      "properties": {
+        "v": {
+          "const": "gabp/1",
+          "description": "Protocol version identifier"
+        },
+        "id": {
+          "$ref": "#/$defs/uuid",
+          "description": "Request identifier this response corresponds to"
+        },
+        "type": {
+          "const": "response",
+          "description": "Message type"
+        },
+        "result": {
+          "description": "Successful method result"
+        },
+        "error": {
+          "$ref": "#/$defs/error",
+          "description": "Error information if method failed"
+        }
+      },
+      "allOf": [
+        { "not": { "required": ["result", "error"] } },
+        { "anyOf": [
+          { "required": ["result"] },
+          { "required": ["error"] }
+        ]}
+      ],
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "required": ["v", "id", "type", "channel", "seq", "payload"],
+      "properties": {
+        "v": {
+          "const": "gabp/1",
+          "description": "Protocol version identifier"
+        },
+        "id": {
+          "$ref": "#/$defs/uuid",
+          "description": "Unique event identifier"
+        },
+        "type": {
+          "const": "event",
+          "description": "Message type"
+        },
+        "channel": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Event channel name"
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Sequence number for this channel"
+        },
+        "payload": {
+          "description": "Event-specific data"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/tools.call.response.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tools/call Response",
+  "description": "Response schema for tool invocation result",
+  "type": "object",
+  "required": ["v", "id", "type"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Request identifier this response corresponds to"
+    },
+    "type": {
+      "const": "response",
+      "description": "Message type"
+    },
+    "result": {
+      "description": "Tool execution result (tool-specific format)"
+    },
+    "error": {
+      "$ref": "../common/error.schema.json",
+      "description": "Error information if tool execution failed"
+    }
+  },
+  "allOf": [
+    { "not": { "required": ["result", "error"] } },
+    { "anyOf": [
+      { "required": ["result"] },
+      { "required": ["error"] }
+    ]}
+  ],
+  "additionalProperties": false
+}

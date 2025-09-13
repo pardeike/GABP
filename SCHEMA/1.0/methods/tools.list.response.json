@@ -1,0 +1,38 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/tools.list.response.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tools/list Response",
+  "description": "Response schema for tools list",
+  "type": "object",
+  "required": ["v", "id", "type", "result"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Request identifier this response corresponds to"
+    },
+    "type": {
+      "const": "response",
+      "description": "Message type"
+    },
+    "result": {
+      "type": "object",
+      "required": ["tools"],
+      "properties": {
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "../common/tool.schema.json"
+          },
+          "description": "Array of available tools"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

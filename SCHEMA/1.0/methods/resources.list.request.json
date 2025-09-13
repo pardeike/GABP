@@ -1,0 +1,43 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/resources.list.request.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "resources/list Request",
+  "description": "Request schema for listing available resources",
+  "type": "object",
+  "required": ["v", "id", "type", "method"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique request identifier"
+    },
+    "type": {
+      "const": "request",
+      "description": "Message type"
+    },
+    "method": {
+      "const": "resources/list",
+      "description": "Method name"
+    },
+    "params": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Glob pattern to filter resources"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Filter by resource namespace"
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,82 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/session.welcome.response.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "session/welcome Response",
+  "description": "Response schema for successful session initialization",
+  "type": "object",
+  "required": ["v", "id", "type", "result"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Request identifier this response corresponds to"
+    },
+    "type": {
+      "const": "response",
+      "description": "Message type"
+    },
+    "result": {
+      "type": "object",
+      "required": ["agentId", "app", "capabilities", "schemaVersion"],
+      "properties": {
+        "agentId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique identifier for the mod/agent instance"
+        },
+        "app": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Application or game name"
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Application or game version"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Host application information"
+        },
+        "capabilities": {
+          "$ref": "../common/capabilities.schema.json",
+          "description": "Supported features and methods"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "pattern": "^1\\.\\d+(?:\\.\\d+)?$",
+          "description": "GABP schema version supported"
+        },
+        "serverInfo": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Server/mod name"
+            },
+            "version": {
+              "type": "string",
+              "description": "Server/mod version"
+            },
+            "author": {
+              "type": "string",
+              "description": "Server/mod author"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Optional server/mod information"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

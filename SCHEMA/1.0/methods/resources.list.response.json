@@ -1,0 +1,39 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/resources.list.response.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "resources/list Response",
+  "description": "Response schema for resource list",
+  "type": "object",
+  "required": ["v", "id", "type", "result"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Request identifier this response corresponds to"
+    },
+    "type": {
+      "const": "response",
+      "description": "Message type"
+    },
+    "result": {
+      "type": "object",
+      "required": ["resources"],
+      "properties": {
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": "Array of available resource URIs"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,21 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440021",
+  "type": "event",
+  "channel": "player/move",
+  "seq": 42,
+  "payload": {
+    "playerId": "steve",
+    "position": {
+      "x": 100.5,
+      "y": 64.0,
+      "z": 200.3
+    },
+    "velocity": {
+      "x": 0.2,
+      "y": 0.0,
+      "z": -0.1
+    }
+  },
+  "timestamp": "2025-01-02T10:30:45.123Z"
+}

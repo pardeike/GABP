@@ -1,0 +1,63 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440010",
+  "type": "response",
+  "result": {
+    "tools": [
+      {
+        "name": "inventory.get",
+        "title": "Get Player Inventory",
+        "description": "Retrieves the current player's inventory contents",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "playerId": {
+              "type": "string",
+              "description": "Player identifier (optional, defaults to current player)"
+            }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "slots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "slot": { "type": "integer" },
+                  "item": { "type": "string" },
+                  "count": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["inventory", "player"]
+      },
+      {
+        "name": "world.place_block",
+        "title": "Place Block",
+        "description": "Places a block at the specified coordinates",
+        "inputSchema": {
+          "type": "object",
+          "required": ["x", "y", "z", "blockType"],
+          "properties": {
+            "x": { "type": "integer" },
+            "y": { "type": "integer" }, 
+            "z": { "type": "integer" },
+            "blockType": { "type": "string" }
+          }
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "success": { "type": "boolean" },
+            "blockPlaced": { "type": "string" }
+          }
+        },
+        "tags": ["world", "building"]
+      }
+    ]
+  }
+}

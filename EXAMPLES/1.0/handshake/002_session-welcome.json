@@ -1,0 +1,45 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "type": "response",
+  "result": {
+    "agentId": "minecraft-mod-v2.1",
+    "app": {
+      "name": "Minecraft",
+      "version": "1.20.4"
+    },
+    "capabilities": {
+      "methods": [
+        "session/hello",
+        "session/welcome",
+        "tools/list", 
+        "tools/call",
+        "events/subscribe",
+        "events/unsubscribe",
+        "resources/list",
+        "resources/read"
+      ],
+      "events": [
+        "player/move",
+        "world/block_change",
+        "inventory/update"
+      ],
+      "resources": [
+        "gabp://game/world",
+        "gabp://game/players",
+        "gabp://mod/config"
+      ],
+      "limits": {
+        "maxMessageSize": 1048576,
+        "maxConcurrentRequests": 10,
+        "requestTimeout": 30
+      }
+    },
+    "schemaVersion": "1.0",
+    "serverInfo": {
+      "name": "GABP Minecraft Mod",
+      "version": "2.1.0",
+      "author": "Example Author"
+    }
+  }
+}
