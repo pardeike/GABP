@@ -18,7 +18,7 @@ The wire protocol version is communicated in the `v` field of all GABP messages:
 
 Within `gabp/1`, only **additive changes** are allowed:
 
-✅ **Allowed Changes**:
+**Allowed Changes**:
 - New optional fields in existing message types
 - New methods in existing or new namespaces
 - New event channels
@@ -26,7 +26,7 @@ Within `gabp/1`, only **additive changes** are allowed:
 - New capabilities and extensions
 - Clarifications and documentation improvements
 
-❌ **Breaking Changes** (require gabp/2):
+**Breaking Changes** (require gabp/2):
 - Removing or renaming existing fields
 - Changing field types or constraints
 - Removing existing methods

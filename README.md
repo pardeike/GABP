@@ -1,6 +1,6 @@
 # GABP (Game Agent Bridge Protocol)
 
-GABP is a JSON-RPC-like protocol that enables communication between game modification frameworks (mods) and external automation tools (bridges). It provides a standardized way for AI agents, testing frameworks, and other external systems to interact with games through a well-defined API.
+GABP is a communication protocol that lets AI tools talk to games. It works like a bridge between AI agents and game modifications. This allows AI systems, testing tools, and other programs to control and interact with games in a standard way.
 
 ## Status
 
@@ -12,42 +12,42 @@ The protocol uses semantic versioning for repository releases. The wire protocol
 
 ## What is GABP?
 
-GABP defines:
-- **Message Format**: JSON-RPC-style messages with request/response/event patterns
-- **Transport Layer**: Supports stdio, TCP (127.0.0.1), and named pipes/Unix sockets
-- **Security Model**: Token-based authentication with loopback-only connections
-- **Method Registry**: Standardized method names and error codes
-- **Capability Negotiation**: Handshake process for feature discovery
+GABP defines these key parts:
+- **Message Format**: JSON messages that look like JSON-RPC with requests, responses, and events
+- **Transport Layer**: Works with stdio, TCP connections (local only), and pipes/sockets
+- **Security Model**: Uses tokens for authentication and only allows local connections  
+- **Method Registry**: Standard names for methods and error codes
+- **Capability Negotiation**: Handshake process to discover what features are available
 
-### Core Concepts
+### Key Terms
 
-- **Bridge**: The client application that connects to the game mod (external automation tool)
-- **Mod**: The server application running within the game (game modification framework)
-- **Agent**: The AI or automation system using the bridge to interact with the game
+- **Bridge**: The client program that connects to the game mod (this is your AI tool)
+- **Mod**: The server program running inside the game (the game modification)
+- **Agent**: The AI or automation system that uses the bridge to control the game
 
 ## Documentation
 
-- **[Specification](SPEC/1.0/gabp.md)** - Normative protocol specification
-- **[Transport & Framing](SPEC/1.0/transport.md)** - Connection and message framing details
-- **[Security Model](SPEC/1.0/security.md)** - Authentication and security considerations
+- **[Main Specification](SPEC/1.0/gabp.md)** - Complete protocol rules and requirements
+- **[Transport & Connections](SPEC/1.0/transport.md)** - How to connect and send messages  
+- **[Security Guide](SPEC/1.0/security.md)** - Authentication and safety rules
 - **[Method Registry](SPEC/1.0/registry.md)** - Standard method names and error codes
 
 ## Schemas
 
-Machine-readable JSON Schema definitions are available in the [`SCHEMA/1.0/`](SCHEMA/1.0/) directory:
+Computer-readable definitions are in the [`SCHEMA/1.0/`](SCHEMA/1.0/) directory:
 
-- [`envelope.schema.json`](SCHEMA/1.0/envelope.schema.json) - Base message envelope
-- [`methods/`](SCHEMA/1.0/methods/) - Request/response schemas for standard methods
-- [`events/`](SCHEMA/1.0/events/) - Event message schemas
-- [`common/`](SCHEMA/1.0/common/) - Shared type definitions
+- [`envelope.schema.json`](SCHEMA/1.0/envelope.schema.json) - Basic message structure
+- [`methods/`](SCHEMA/1.0/methods/) - Schemas for standard method calls
+- [`events/`](SCHEMA/1.0/events/) - Schemas for event messages
+- [`common/`](SCHEMA/1.0/common/) - Shared definitions used everywhere
 
 ## Examples
 
-Working examples of GABP messages can be found in [`EXAMPLES/1.0/`](EXAMPLES/1.0/):
+Working examples of GABP messages are in [`EXAMPLES/1.0/`](EXAMPLES/1.0/):
 
-- **[Handshake](EXAMPLES/1.0/handshake/)** - Session establishment flow
-- **[Tools](EXAMPLES/1.0/tools/)** - Tool discovery and invocation
-- **[Events](EXAMPLES/1.0/events/)** - Event subscription and messages
+- **[Handshake](EXAMPLES/1.0/handshake/)** - How to start a session
+- **[Tools](EXAMPLES/1.0/tools/)** - How to find and use tools
+- **[Events](EXAMPLES/1.0/events/)** - How to subscribe to and receive events
 
 ## Validation
 
@@ -64,14 +64,14 @@ The [`CONFORMANCE/1.0/`](CONFORMANCE/1.0/) directory contains:
 - [`valid/`](CONFORMANCE/1.0/valid/) - Messages that should validate successfully
 - [`invalid/`](CONFORMANCE/1.0/invalid/) - Messages that should fail validation
 
-## Quick Start
+## Getting Started
 
-1. **Establish Connection**: Bridge connects to mod via configured transport
-2. **Handshake**: Exchange `session/hello` and `session/welcome` messages
-3. **Capability Discovery**: Use `tools/list` to discover available functionality
-4. **Interaction**: Call methods, subscribe to events, access resources
+1. **Connect**: Bridge connects to mod using one of the transport methods
+2. **Handshake**: Send `session/hello` and receive `session/welcome` messages
+3. **Discover**: Use `tools/list` to see what the game can do
+4. **Interact**: Call methods, subscribe to events, and read resources
 
-Example handshake:
+Basic handshake example:
 
 ```json
 // Bridge -> Mod: session/hello

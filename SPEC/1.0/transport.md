@@ -6,38 +6,41 @@
 
 ## Abstract
 
-This document specifies the transport layer for GABP (Game Agent Bridge Protocol), including supported transport methods, message framing, and connection establishment procedures.
+This document explains how GABP (Game Agent Bridge Protocol) connections work. It covers the different ways to connect, how messages are sent, and how connections are established.
 
-## 1. Supported Transports
+## 1. Connection Methods
 
-GABP implementations MUST support at least one of the following transport methods:
+GABP implementations must support at least one of these connection methods:
 
-### 1.1 Standard I/O (stdio)
+### 1.1 Standard Input/Output (stdio)
 
-The mod process reads from standard input and writes to standard output. The bridge launches the mod process and communicates via pipes.
+The game mod reads from standard input and writes to standard output. The bridge starts the mod process and talks to it through pipes.
 
-**Connection**: Bridge spawns mod process and inherits stdin/stdout
-**Addressing**: Not applicable (process-based)
-**Security**: Process isolation and token authentication
+**How it works**: Bridge starts mod process and inherits stdin/stdout
+**Address**: Not needed (process-based)  
+**Security**: Process separation and token authentication
+**Best for**: Local development and testing
 
 ### 1.2 TCP Socket
 
-TCP connections on the loopback interface (127.0.0.1) only.
+TCP connections using the local computer only (127.0.0.1).
 
-**Connection**: Mod binds to 127.0.0.1 on an available port
-**Addressing**: `127.0.0.1:<port>` where port is communicated via configuration
-**Security**: Loopback-only + token authentication
+**How it works**: Mod listens on 127.0.0.1 on an available port
+**Address**: `127.0.0.1:<port>` where port is set in configuration
+**Security**: Local-only connections + token authentication  
+**Best for**: When the game and AI agent need to run separately
 
-### 1.3 Named Pipes (Windows) / Unix Domain Sockets
+### 1.3 Named Pipes (Windows) / Unix Sockets
 
-Platform-specific IPC mechanisms.
+Platform-specific communication methods.
 
-**Windows**: Named pipes in the format `\\.\pipe\gabp-<identifier>`
-**Unix/Linux/macOS**: Unix domain sockets in `/tmp/gabp-<identifier>.sock`
+**Windows**: Named pipes like `\\.\pipe\gabp-<identifier>`
+**Unix/Linux/macOS**: Unix sockets like `/tmp/gabp-<identifier>.sock`
 
-**Connection**: Mod creates the named pipe/socket, bridge connects
-**Addressing**: Platform-specific path
+**How it works**: Mod creates the pipe/socket, bridge connects to it
+**Address**: Platform-specific path
 **Security**: File system permissions + token authentication
+**Best for**: High-performance local communication
 
 ## 2. Message Framing
 
@@ -108,9 +111,41 @@ For named pipe/Unix socket transport:
 4. **Handshake**: Bridge sends `session/hello` with authentication token
 5. **Authentication**: Mod validates token and responds with `session/welcome`
 
-## 4. Configuration
+## 4. AI Agent Development Workflow
 
-### 4.1 Configuration File Location
+### 4.1 Typical AI Agent Session
+
+A typical AI agent development session follows this pattern:
+
+1. **Game Launch**: AI tool starts the game/application with mod loaded
+2. **Connection Setup**: Bridge establishes connection using one of the transport methods
+3. **Authentication**: Secure handshake using token-based authentication  
+4. **Discovery**: Agent discovers available game functionality via `tools/list` and `resources/list`
+5. **Interaction Loop**: Agent reads game state, executes actions, and monitors events
+6. **Cleanup**: Connection is terminated when session ends
+
+### 4.2 Development Use Case
+
+This workflow enables AI agents to work like human developers:
+
+- **Code Testing**: AI can start the game to test code changes
+- **State Inspection**: Real-time monitoring of game state during development
+- **Automated Testing**: AI can run test scenarios and verify results
+- **Debugging**: Event monitoring and state queries help identify issues
+- **Rapid Iteration**: Fast connection setup enables quick development cycles
+
+### 4.3 Connection Lifecycle Management
+
+For AI agent development workflows:
+
+- **Automatic Reconnection**: Bridge should reconnect if game restarts during development
+- **Session Persistence**: Configuration and state should survive brief disconnections  
+- **Resource Cleanup**: Proper cleanup when development session ends
+- **Error Recovery**: Graceful handling of game crashes or network issues
+
+## 5. Configuration
+
+### 5.1 Configuration File Location
 
 The bridge MUST write configuration to a platform-specific location:
 
@@ -118,7 +153,7 @@ The bridge MUST write configuration to a platform-specific location:
 - **macOS**: `~/Library/Application Support/gabp/bridge.json`
 - **Linux**: `~/.config/gabp/bridge.json`
 
-### 4.2 Configuration File Format
+### 5.2 Configuration File Format
 
 The configuration file MUST be a JSON object with the following structure:
 
@@ -137,7 +172,7 @@ The configuration file MUST be a JSON object with the following structure:
 }
 ```
 
-### 4.3 Configuration Fields
+### 5.3 Configuration Fields
 
 - `token` (string, required): Authentication token for this session
 - `transport.type` (string, required): Transport method ("tcp", "stdio", or "pipe")
@@ -147,16 +182,16 @@ The configuration file MUST be a JSON object with the following structure:
   - Not used for stdio
 - `metadata` (object, optional): Additional session information
 
-### 4.4 Configuration Security
+### 5.4 Configuration Security
 
 - Configuration file MUST have permissions restricting access to the current user only
 - Configuration file MUST be created atomically to prevent race conditions
 - Token MUST be cryptographically random (minimum 128 bits entropy)
 - Token SHOULD rotate per session unless explicitly configured otherwise
 
-## 5. Error Handling
+## 6. Error Handling
 
-### 5.1 Transport Errors
+### 6.1 Transport Errors
 
 Common transport-level errors and handling:
 
@@ -165,35 +200,35 @@ Common transport-level errors and handling:
 - **Framing Error**: Invalid header format or content length mismatch
 - **JSON Parse Error**: Invalid JSON in message body
 
-### 5.2 Recovery Behavior
+### 6.2 Recovery Behavior
 
 - Bridges SHOULD implement reconnection logic with exponential backoff
 - Mods SHOULD continue accepting new connections after client disconnection
 - Both parties MUST handle partial reads/writes gracefully
 
-## 6. Performance Considerations
+## 7. Performance Considerations
 
-### 6.1 Message Size Limits
+### 7.1 Message Size Limits
 
 - Implementations SHOULD support messages up to 1MB in size
 - Implementations MAY reject messages exceeding configured limits
 - Large payloads SHOULD be transferred via resource URIs when possible
 
-### 6.2 Connection Limits
+### 7.2 Connection Limits
 
 - Mods MAY limit the number of concurrent connections
 - Recommended limit: 10 concurrent bridge connections
 - Mods SHOULD implement fair queuing for multiple clients
 
-### 6.3 Buffering
+### 7.3 Buffering
 
 - Implementations SHOULD buffer outgoing messages to avoid blocking
 - Buffer size SHOULD be configurable with reasonable defaults
 - Implementations MUST handle buffer overflow gracefully
 
-## 7. Platform-Specific Considerations
+## 8. Platform-Specific Considerations
 
-### 7.1 Windows
+### 8.1 Windows
 
 - Named pipes: Use `\\.\pipe\gabp-<launchId>` format
 - File permissions: Use Windows ACLs to restrict access

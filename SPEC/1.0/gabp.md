@@ -10,12 +10,29 @@ The Game Agent Bridge Protocol (GABP) is a JSON-RPC-inspired protocol that enabl
 
 ## 1. Introduction
 
-GABP facilitates communication between two primary roles:
+GABP enables communication between two types of programs:
 
-- **Bridge**: The client application that connects to a game mod (external automation tool)
-- **Mod**: The server application running within a game (game modification framework)
+- **Bridge**: The client program that connects to a game mod (your AI tool or automation system)
+- **Mod**: The server program running inside a game (the game modification that exposes game functionality)
 
-The protocol is designed to support AI agents, testing frameworks, and other automation systems that need to interact with games in a structured, reliable manner.
+This protocol is designed for AI agents, testing frameworks, and other automation systems that need to interact with games. Common use cases include:
+
+- AI agents debugging game behavior during development
+- Automated testing of game features  
+- AI-assisted game development and content creation
+- Remote game control for research and analysis
+
+### 1.1 AI Agent Development Workflow
+
+GABP supports AI agent development workflows similar to how human developers work:
+
+1. **Game Launch**: The bridge starts the game/application with the mod loaded
+2. **Connection**: Bridge establishes a secure connection to the game
+3. **Discovery**: Bridge discovers available game functionality through tools and resources
+4. **Interaction**: AI agent can read game state, execute actions, and monitor events
+5. **Debugging**: Real-time event monitoring and state inspection for debugging
+
+This enables AI agents to verify code changes during development, just like human developers start applications to test their modifications.
 
 ## 2. Conformance
 
@@ -191,24 +208,57 @@ Unsubscribes from one or more event channels.
 
 #### resources/list
 
-Lists available resources.
+Lists available resources that can be read by the bridge.
 
 **Request Parameters**:
-- `pattern` (string, optional): Glob pattern to filter resources
+- `pattern` (string, optional): Glob pattern to filter resources (e.g., "world/*", "config/*.json")
 
 **Response Result**:
-- `resources` (array, required): Array of resource URIs
+- `resources` (array, required): Array of resource objects, each containing:
+  - `uri` (string, required): Resource URI
+  - `name` (string, required): Human-readable resource name
+  - `description` (string, optional): Description of the resource
+  - `mimeType` (string, optional): MIME type hint
+  - `size` (integer, optional): Size in bytes (for file resources)
 
 #### resources/read
 
-Reads a specific resource.
+Reads the content of a specific resource.
 
 **Request Parameters**:
 - `uri` (string, required): Resource URI to read
 
 **Response Result**:
-- `content` (any type, required): Resource content
+- `content` (any type, required): Resource content (string for text, base64 for binary)
 - `mimeType` (string, optional): MIME type of the content
+- `encoding` (string, optional): Content encoding ("utf-8", "base64", etc.)
+
+### 4.5 Game State Management
+
+#### state/get
+
+Gets the current game state or specific state components.
+
+**Request Parameters**:
+- `components` (array, optional): Array of state component names to retrieve
+- `playerId` (string, optional): Player ID for player-specific state
+
+**Response Result**:
+- `state` (object, required): Current game state data
+- `timestamp` (integer, required): Unix timestamp when state was captured
+
+#### state/set
+
+Sets or modifies game state (if supported by the game).
+
+**Request Parameters**:
+- `updates` (object, required): State updates to apply
+- `playerId` (string, optional): Player ID for player-specific updates
+- `validate` (boolean, optional): Whether to validate updates before applying
+
+**Response Result**:
+- `applied` (object, required): Successfully applied updates
+- `errors` (array, optional): Array of validation or application errors
 
 ## 5. Method Names
 
@@ -216,9 +266,10 @@ Method names MUST follow the pattern `^[a-z]+(/[a-z]+)+$` (lowercase segments se
 
 Reserved method namespaces:
 - `session/*` - Session management
-- `tools/*` - Tool discovery and invocation
+- `tools/*` - Tool discovery and invocation  
 - `events/*` - Event subscription management
 - `resources/*` - Resource access
+- `state/*` - Game state management
 
 ## 6. Error Codes
 

@@ -1,0 +1,25 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440030",
+  "type": "response",
+  "result": {
+    "state": {
+      "world": {
+        "dimension": "minecraft:overworld",
+        "time": 6000,
+        "weather": "clear"
+      },
+      "player": {
+        "name": "steve",
+        "position": {"x": 100, "y": 64, "z": 200},
+        "health": 20,
+        "hunger": 18,
+        "inventory": {
+          "0": {"item": "minecraft:dirt", "count": 64},
+          "1": {"item": "minecraft:wood_pickaxe", "count": 1}
+        }
+      }
+    },
+    "timestamp": 1704186600
+  }
+}
