@@ -31,6 +31,7 @@ GABP defines these key parts:
 - **[Transport & Connections](SPEC/1.0/transport.md)** - How to connect and send messages  
 - **[Security Guide](SPEC/1.0/security.md)** - Authentication and safety rules
 - **[Method Registry](SPEC/1.0/registry.md)** - Standard method names and error codes
+- **[AI Implementation Guide](SPEC/1.0/ai-implementation.md)** - AI-assisted development prompts and patterns
 
 ## Schemas
 

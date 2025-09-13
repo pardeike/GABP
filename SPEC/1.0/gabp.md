@@ -340,7 +340,262 @@ See [security.md](security.md) for detailed security considerations including:
 - Transport security
 - Threat model analysis
 
-## 12. References
+## 12. AI Implementation Guide
+
+This section provides compressed information and practical guidance specifically for AI assistants and automated 
+tools building GABP-compliant implementations.
+
+### 12.1 Protocol Summary for AI Context
+
+**Core Concept**: GABP is a JSON-RPC-inspired protocol enabling AI tools (bridges) to communicate with 
+game modifications (mods). Think of it as a standardized API for AI-game interaction.
+
+**Key Components**:
+
+- **Envelope**: All messages are JSON with `{"v":"gabp/1", "id":"uuid", "type":"request|response|event"}`
+- **Transport**: stdio, TCP localhost, or named pipes with LSP-style headers
+- **Auth**: Shared token from config file, loopback-only connections  
+- **Methods**: Namespaced like `session/hello`, `tools/list`, `events/subscribe`
+- **Errors**: JSON-RPC style with numeric codes (-32xxx for standard, -31xxx for custom)
+
+**Message Types**:
+
+1. **Request**: `{"type":"request", "method":"tools/list", "params":{}}`
+2. **Response**: `{"type":"response", "result":{} OR "error":{"code":-32601,"message":"..."}}`
+3. **Event**: `{"type":"event", "channel":"player/move", "seq":0, "payload":{}}`
+
+### 12.2 Building a GABP Bridge (Client)
+
+When building an AI tool that connects to games, use this implementation template:
+
+#### AI Prompt for Bridge Implementation
+
+```text
+Create a GABP bridge client that:
+
+1. TRANSPORT: Connect via stdio/TCP using LSP-style headers:
+   "Content-Length: <bytes>\r\n\r\n{json}"
+
+2. HANDSHAKE: Send session/hello with token from config file:
+   {
+     "v": "gabp/1",
+     "id": "<uuid>",
+     "type": "request", 
+     "method": "session/hello",
+     "params": {
+       "token": "<from-config>",
+       "bridgeVersion": "1.0.0",
+       "platform": "windows|macos|linux",
+       "launchId": "unique-session-id"
+     }
+   }
+
+3. CAPABILITIES: Parse session/welcome response to discover available tools/events:
+   result.capabilities.tools = ["inventory/get", "world/place_block"]
+   result.capabilities.events = ["player/move", "world/block_change"]
+
+4. OPERATIONS: 
+   - Call tools: tools/call method with tool name and parameters
+   - Subscribe to events: events/subscribe with channel names
+   - Handle async events with proper sequencing
+
+5. ERROR HANDLING: Check response.error field, map JSON-RPC codes to actions
+
+Implementation requirements:
+- Validate all messages against JSON schemas  
+- Handle connection drops gracefully
+- Implement proper UUID generation
+- Support concurrent request/response pairs
+- Process events in sequence order per channel
+```
+
+#### Bridge Implementation Checklist
+
+- [ ] **Transport Layer**: Implement LSP framing for chosen transport (stdio/TCP/pipes)
+- [ ] **Config Reader**: Parse token from platform-specific config location  
+- [ ] **Message Validation**: Validate outgoing requests and incoming responses
+- [ ] **Session Management**: Handle hello/welcome handshake and capability parsing
+- [ ] **Request/Response**: Support async request handling with UUID matching
+- [ ] **Event Processing**: Subscribe to channels and process events in sequence
+- [ ] **Error Handling**: Map error codes to appropriate bridge actions
+- [ ] **Graceful Shutdown**: Clean disconnect on session end
+
+### 12.3 Building a GABP Mod (Server)
+
+When building a game modification that exposes GABP functionality:
+
+#### AI Prompt for Mod Implementation
+
+```text
+Create a GABP mod server that:
+
+1. TRANSPORT: Listen on stdio/TCP/pipe and parse LSP-framed messages
+
+2. SESSION HANDLING: Respond to session/hello with capabilities:
+   {
+     "type": "response",
+     "id": "<same-as-request>",
+     "result": {
+       "agentId": "my-game-mod-v1.0",
+       "app": {"name": "MyGame", "version": "1.2.0"},
+       "capabilities": {
+         "tools": ["inventory/get", "world/place_block"],
+         "events": ["player/move", "world/block_change"], 
+         "resources": ["world/schematic"]
+       },
+       "schemaVersion": "1.0"
+     }
+   }
+
+3. TOOL REGISTRY: Implement tools/list and tools/call methods:
+   - tools/list: Return available tools with schemas
+   - tools/call: Execute tool and return result/error
+
+4. EVENT SYSTEM: Implement events/subscribe and emit events:
+   - Track subscribed channels per connection
+   - Emit events with incrementing sequence numbers
+   - Include game state in event payloads
+
+5. RESOURCE ACCESS: Implement resources/list and resources/read:
+   - Expose game data as URI-addressable resources
+   - Support filtering and pagination
+
+Game integration points:
+- Hook into game's event system for real-time events
+- Expose game APIs as GABP tools with proper input/output schemas
+- Provide read/write access to game state through resources
+```
+
+#### Mod Implementation Checklist
+
+- [ ] **Transport Server**: Accept connections on chosen transport with LSP parsing
+- [ ] **Token Validation**: Verify tokens against bridge config file
+- [ ] **Capability Declaration**: Advertise available tools/events/resources accurately
+- [ ] **Tool Implementation**: Map GABP tools to actual game functionality  
+- [ ] **Event Broadcasting**: Hook game events and broadcast to subscribed channels
+- [ ] **Resource Exposure**: Provide URI-based access to game data
+- [ ] **State Management**: Track per-connection subscriptions and session state
+- [ ] **Schema Validation**: Validate tool parameters and resource requests
+
+### 12.4 Common Implementation Patterns
+
+#### Message Validation Pattern
+
+```javascript
+// Validate envelope structure for all messages
+function validateGABPMessage(msg) {
+  if (!msg.v || msg.v !== "gabp/1") throw new Error("Invalid version");
+  if (!msg.id || !isValidUUID(msg.id)) throw new Error("Invalid ID");  
+  if (!["request","response","event"].includes(msg.type)) throw new Error("Invalid type");
+  
+  if (msg.type === "request" && !msg.method) throw new Error("Missing method");
+  if (msg.type === "response" && !(msg.result || msg.error)) throw new Error("Missing result/error");
+  if (msg.type === "event" && !(msg.channel && typeof msg.seq === "number")) 
+    throw new Error("Invalid event");
+}
+```
+
+#### Error Response Pattern
+
+```javascript
+// Standard error response format
+function createErrorResponse(requestId, code, message, data = null) {
+  return {
+    "v": "gabp/1",
+    "id": requestId, 
+    "type": "response",
+    "error": {
+      "code": code,        // Use standard JSON-RPC codes
+      "message": message,  // Human-readable description
+      "data": data         // Optional additional context
+    }
+  };
+}
+```
+
+#### Event Emission Pattern
+
+```javascript
+// Emit events with proper sequencing
+class EventEmitter {
+  constructor() {
+    this.sequences = new Map(); // channel -> seq number
+    this.subscriptions = new Map(); // connection -> Set<channel>
+  }
+  
+  emit(channel, payload) {
+    const seq = this.sequences.get(channel) || 0;
+    this.sequences.set(channel, seq + 1);
+    
+    const event = {
+      "v": "gabp/1",
+      "id": generateUUID(),
+      "type": "event", 
+      "channel": channel,
+      "seq": seq,
+      "payload": payload
+    };
+    
+    // Send to all subscribers
+    for (let [conn, channels] of this.subscriptions) {
+      if (channels.has(channel)) {
+        conn.send(event);
+      }
+    }
+  }
+}
+```
+
+### 12.5 Debugging and Testing
+
+#### Debug Checklist
+
+- [ ] **Message Logging**: Log all sent/received messages with timestamps
+- [ ] **Schema Validation**: Validate against official JSON schemas in SCHEMA/1.0/  
+- [ ] **Conformance Tests**: Test with examples in CONFORMANCE/1.0/valid/
+- [ ] **Error Simulation**: Test with invalid messages in CONFORMANCE/1.0/invalid/
+- [ ] **Connection Handling**: Test disconnect/reconnect scenarios
+- [ ] **Concurrent Operations**: Test multiple simultaneous requests
+- [ ] **Event Ordering**: Verify events arrive in sequence per channel
+
+#### Integration Testing Pattern
+
+```javascript
+// Basic integration test structure
+async function testGABPIntegration() {
+  // 1. Connect and handshake
+  const bridge = new GABPBridge();
+  await bridge.connect();
+  const welcome = await bridge.hello(token);
+  assert(welcome.capabilities);
+  
+  // 2. Test tool discovery and execution  
+  const tools = await bridge.listTools();
+  assert(tools.length > 0);
+  const result = await bridge.callTool(tools[0].name, {});
+  assert(result !== undefined);
+  
+  // 3. Test event subscription
+  const events = [];
+  await bridge.subscribe(["test/channel"]);
+  bridge.on("event", e => events.push(e));
+  
+  // Trigger event somehow...
+  await sleep(100);
+  assert(events.length > 0);
+  assert(events[0].seq === 0);
+}
+```
+
+### 12.6 Performance and Scaling Considerations
+
+- **Connection Pooling**: Bridge implementations should reuse connections when possible
+- **Event Batching**: Group related events to reduce message overhead  
+- **Resource Caching**: Cache frequently-accessed resources to reduce mod load
+- **Schema Caching**: Cache and reuse parsed JSON schemas for validation
+- **Connection Limits**: Mods should limit concurrent connections to prevent DoS
+
+## 13. References
 
 - [RFC 2119](https://tools.ietf.org/html/rfc2119) - Key words for use in RFCs to Indicate Requirement Levels
 - [JSON-RPC 2.0](https://www.jsonrpc.org/specification) - JSON-RPC 2.0 Specification
