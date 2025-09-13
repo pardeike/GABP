@@ -1,0 +1,30 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/state.get.response.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "GABP state/get Response",
+  "description": "Response containing current game state data",
+  "type": "object",
+  "required": ["v", "id", "type", "result"],
+  "properties": {
+    "v": { "const": "gabp/1" },
+    "id": { "type": "string", "format": "uuid" },
+    "type": { "const": "response" },
+    "result": {
+      "type": "object",
+      "required": ["state", "timestamp"],
+      "properties": {
+        "state": {
+          "type": "object",
+          "description": "Current game state data"
+        },
+        "timestamp": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Unix timestamp when state was captured"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

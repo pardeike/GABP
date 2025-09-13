@@ -1,0 +1,69 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/common/capabilities.schema.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "GABP Capabilities",
+  "description": "Capability information for GABP session negotiation",
+  "type": "object",
+  "properties": {
+    "methods": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]+(/[a-z]+)+$"
+      },
+      "uniqueItems": true,
+      "description": "List of supported method names"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "List of available event channels"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "uniqueItems": true,
+      "description": "List of accessible resource URIs"
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Extension-specific capabilities",
+      "patternProperties": {
+        "^[a-z][a-z0-9_-]*$": {
+          "type": "object",
+          "description": "Extension capability object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "maxMessageSize": {
+          "type": "integer",
+          "minimum": 1024,
+          "description": "Maximum message size in bytes"
+        },
+        "maxConcurrentRequests": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum concurrent requests allowed"
+        },
+        "requestTimeout": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Request timeout in seconds"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Implementation limits and constraints"
+    }
+  },
+  "additionalProperties": false
+}

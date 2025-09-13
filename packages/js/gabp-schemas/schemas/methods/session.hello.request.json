@@ -1,0 +1,70 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/session.hello.request.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "session/hello Request",
+  "description": "Request schema for session initialization",
+  "type": "object",
+  "required": ["v", "id", "type", "method", "params"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique request identifier"
+    },
+    "type": {
+      "const": "request",
+      "description": "Message type"
+    },
+    "method": {
+      "const": "session/hello",
+      "description": "Method name"
+    },
+    "params": {
+      "type": "object",
+      "required": ["token", "bridgeVersion", "platform", "launchId"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "minLength": 32,
+          "description": "Authentication token (minimum 128-bit hex)"
+        },
+        "bridgeVersion": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Bridge software version"
+        },
+        "platform": {
+          "type": "string",
+          "enum": ["windows", "macos", "linux"],
+          "description": "Operating system platform"
+        },
+        "launchId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique session launch identifier"
+        },
+        "clientInfo": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Client application name"
+            },
+            "version": {
+              "type": "string",
+              "description": "Client application version"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Optional client application information"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

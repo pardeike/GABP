@@ -1,0 +1,38 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/state.set.response.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "GABP state/set Response",
+  "description": "Response containing state update results",
+  "type": "object",
+  "required": ["v", "id", "type", "result"],
+  "properties": {
+    "v": { "const": "gabp/1" },
+    "id": { "type": "string", "format": "uuid" },
+    "type": { "const": "response" },
+    "result": {
+      "type": "object",
+      "required": ["applied"],
+      "properties": {
+        "applied": {
+          "type": "object",
+          "description": "Successfully applied updates"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "message"],
+            "properties": {
+              "field": { "type": "string" },
+              "message": { "type": "string" },
+              "code": { "type": "string" }
+            }
+          },
+          "description": "Array of validation or application errors"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

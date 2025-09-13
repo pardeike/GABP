@@ -1,0 +1,45 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/tools.call.request.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "tools/call Request",
+  "description": "Request schema for calling/invoking a specific tool",
+  "type": "object",
+  "required": ["v", "id", "type", "method", "params"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique request identifier"
+    },
+    "type": {
+      "const": "request",
+      "description": "Message type"
+    },
+    "method": {
+      "const": "tools/call",
+      "description": "Method name"
+    },
+    "params": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9_.-]+$",
+          "description": "Tool name to invoke"
+        },
+        "arguments": {
+          "type": "object",
+          "default": {},
+          "description": "Tool-specific arguments"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

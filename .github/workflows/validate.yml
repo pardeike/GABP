@@ -1,0 +1,174 @@
+name: GABP Schema Validation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate-schemas:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies for validation
+      run: |
+        npm install -g ajv-cli@latest
+        pip install jsonschema
+        
+    - name: Validate JSON syntax of all files
+      run: |
+        echo "Validating JSON syntax..."
+        find . -name "*.json" -type f | while read -r file; do
+          echo "Checking $file..."
+          python3 -c "import json; json.load(open('$file'))" || exit 1
+        done
+        
+    - name: Basic schema structure validation
+      run: |
+        echo "Validating that schemas are well-formed..."
+        python3 -c "
+        import json
+        import sys
+        
+        # Check envelope schema structure
+        with open('SCHEMA/1.0/envelope.schema.json') as f:
+            envelope = json.load(f)
+            assert '\$id' in envelope
+            assert 'type' in envelope
+            assert envelope['type'] == 'object'
+            print('✅ Envelope schema structure OK')
+            
+        # Check example message structure  
+        with open('EXAMPLES/1.0/handshake/001_session-hello.json') as f:
+            msg = json.load(f)
+            assert 'v' in msg and msg['v'] == 'gabp/1'
+            assert 'type' in msg and msg['type'] == 'request'
+            assert 'method' in msg
+            print('✅ Example message structure OK')
+        "
+        
+    - name: Validate message format compliance
+      run: |
+        echo "Checking GABP message format compliance..."
+        python3 -c "
+        import json
+        import glob
+        import os
+        
+        def check_gabp_message(file_path):
+            with open(file_path) as f:
+                msg = json.load(f)
+            
+            # Check required fields
+            assert 'v' in msg, f'Missing v field in {file_path}'
+            assert msg['v'] == 'gabp/1', f'Wrong version in {file_path}'
+            assert 'id' in msg, f'Missing id field in {file_path}'
+            assert 'type' in msg, f'Missing type field in {file_path}'
+            assert msg['type'] in ['request', 'response', 'event'], f'Invalid type in {file_path}'
+            
+            # Type-specific checks
+            if msg['type'] == 'request':
+                assert 'method' in msg, f'Request missing method in {file_path}'
+            elif msg['type'] == 'response':
+                has_result = 'result' in msg
+                has_error = 'error' in msg
+                assert has_result != has_error, f'Response must have exactly one of result or error in {file_path}'
+            elif msg['type'] == 'event':
+                assert 'channel' in msg, f'Event missing channel in {file_path}'
+                assert 'seq' in msg, f'Event missing seq in {file_path}'
+                assert 'payload' in msg, f'Event missing payload in {file_path}'
+            
+            return True
+        
+        # Check all example files
+        for pattern in ['EXAMPLES/1.0/**/*.json', 'CONFORMANCE/1.0/valid/*.json']:
+            for file_path in glob.glob(pattern, recursive=True):
+                try:
+                    check_gabp_message(file_path)
+                    print(f'✅ {file_path}')
+                except Exception as e:
+                    print(f'❌ {file_path}: {e}')
+                    exit(1)
+        "
+
+  validate-json-syntax:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Validate JSON syntax
+      run: |
+        echo "Checking JSON syntax for all .json files..."
+        find . -name "*.json" -type f | while read -r file; do
+          echo "Validating $file..."
+          if ! python3 -m json.tool "$file" > /dev/null; then
+            echo "❌ Invalid JSON syntax in $file"
+            exit 1
+          else
+            echo "✅ Valid JSON syntax in $file"  
+          fi
+        done
+
+  validate-markdown:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install markdownlint
+      run: npm install -g markdownlint-cli
+      
+    - name: Lint Markdown files
+      run: |
+        echo "Linting Markdown files..."
+        markdownlint README.md SPEC/1.0/*.md --config .markdownlint.json || true
+        
+  check-file-structure:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Verify required directories exist
+      run: |
+        echo "Checking required directory structure..."
+        
+        # Check required directories
+        for dir in "SPEC/1.0" "SCHEMA/1.0" "EXAMPLES/1.0" "CONFORMANCE/1.0" "LICENSES"; do
+          if [ ! -d "$dir" ]; then
+            echo "❌ Missing required directory: $dir"
+            exit 1
+          else
+            echo "✅ Directory exists: $dir"
+          fi
+        done
+        
+        # Check required files
+        for file in "README.md" "LICENSES/SPEC-LICENSE.txt" "LICENSES/CODE-LICENSE.txt" "SCHEMA/1.0/envelope.schema.json"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          else
+            echo "✅ File exists: $file"
+          fi
+        done
+        
+        echo "✅ All required files and directories are present"

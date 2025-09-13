@@ -1,0 +1,18 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "type": "response",
+  "result": {
+    "agentId": "test-mod",
+    "app": {
+      "name": "TestGame",
+      "version": "1.0"
+    },
+    "capabilities": {
+      "methods": ["session/hello"],
+      "events": [],
+      "resources": []
+    },
+    "schemaVersion": "1.0"
+  }
+}
