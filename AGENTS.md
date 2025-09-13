@@ -2,9 +2,7 @@
 
 ## Your Mission
 
-You are working on the **GABP (Game Agent Bridge Protocol)** repository. This
-protocol enables AI tools to communicate with games through a standardized bridge
-interface.
+You are working on the **GABP (Game Agent Bridge Protocol)** repository. This protocol enables AI tools to communicate with games through a standardized bridge interface.
 
 Your job is to implement and maintain the complete GABP specification, which consists of three main deliverables:
 
@@ -12,9 +10,7 @@ Your job is to implement and maintain the complete GABP specification, which con
 2. **Machine-readable schemas** (JSON Schema files)
 3. **Conformance tests** (Example messages and validation)
 
-This repository follows industry standards: Markdown + JSON Schema for
-specifications, optional AsyncAPI for events, and CI workflows that validate all
-examples.
+This repository follows industry standards: Markdown + JSON Schema for specifications, optional AsyncAPI for events, and CI workflows that validate all examples.
 
 ## Repository Overview
 
@@ -110,345 +106,71 @@ The main specification document must:
 
 - Use RFC 2119 MUST/SHOULD wording for requirements
 - Define protocol roles: **bridge** (client) and **mod** (server)
-- Specify LSP-style framing for message streams:
+- Specify LSP-style framing for message streams
 
-```
-Content-Length: <bytes>\r\n
-Content-Type: application/json\r\n
-\r\n
-{ ...envelope... }
-```
+See [SPEC/1.0/gabp.md](SPEC/1.0/gabp.md) for normative protocol details.
 
-- Define envelope structure and union types
-- Describe handshake flow: `session/hello` → `session/welcome`
-- Establish method registry and extensibility rules
-- Document error handling and codes
-- Cover security model: loopback + token from bridge config
+### Envelope Specification
 
-### Minimal Envelope Specification
+Canonical specification and schema can be found at:
+- [SCHEMA/1.0/envelope.schema.json](SCHEMA/1.0/envelope.schema.json)
 
-```markdown
-# GABP 1.0
+The envelope schema defines the union types for requests, responses, and events. Consult the file directly for up-to-date structure and requirements.
 
-## Envelope
+### Method Schemas
 
-A message is a JSON object with `v`, `id`, and a `type` of `request`, `response`, or `event`.
+All method schemas are maintained in the [SCHEMA/1.0/methods/](SCHEMA/1.0/methods/) directory.  
+For example:
+- [session.hello.request.json](SCHEMA/1.0/methods/session.hello.request.json)
+- [session.welcome.response.json](SCHEMA/1.0/methods/session.welcome.response.json)
 
-```json
-{
-  "v":"gabp/1",
-  "id":"<uuid>",
-  "type":"request|response|event",
-  "method":"...",
-  "params":{},
-  "result":{},
-  "error":{"code":0,"message":""}
-}
-```
+Refer to these files for current field requirements and formats.
 
-### Request
+### Common Schemas
 
-- `type:"request"` MUST include `method` and MAY include `params`
+Reusable schema definitions (such as `tool`, `capabilities`, and `error`) are in [SCHEMA/1.0/common/](SCHEMA/1.0/common/).  
+See:
+- [tool.schema.json](SCHEMA/1.0/common/tool.schema.json)
+- [error.schema.json](SCHEMA/1.0/common/error.schema.json)
+- [capabilities.schema.json](SCHEMA/1.0/common/capabilities.schema.json)
 
-### Response
+### Event Schemas
 
-- `type:"response"` MUST include exactly one of `result` or `error`
-
-### Event
-
-- `type:"event"` MUST include top-level `channel`, `seq`, and `payload`
-- MUST NOT include `method`, `params`, `result`, or `error`
-
-```text
-
-## JSON Schema Implementation
-
-Use JSON Schema Draft 2020-12 with `oneOf` for the three envelope variants. Keep numbers safe for JavaScript.
-
-### SCHEMA/1.0/envelope.schema.json
-
-```json
-{
-  "$id": "https://gabp.dev/schema/1.0/envelope.schema.json",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "GABP Envelope 1.0",
-  "type": "object",
-  "oneOf": [
-    { "$ref": "#/$defs/request" },
-    { "$ref": "#/$defs/response" },
-    { "$ref": "#/$defs/event" }
-  ],
-  "$defs": {
-    "uuid": { "type": "string", "format": "uuid" },
-    "error": {
-      "type": "object",
-      "required": ["code", "message"],
-      "properties": {
-        "code": { "type": "integer" },
-        "message": { "type": "string", "minLength": 1 },
-        "data": {}
-      },
-      "additionalProperties": false
-    },
-    "request": {
-      "type": "object",
-      "required": ["v", "id", "type", "method"],
-      "properties": {
-        "v": { "const": "gabp/1" },
-        "id": { "$ref": "#/$defs/uuid" },
-        "type": { "const": "request" },
-        "method": { "type": "string", "pattern": "^[a-z]+(/[a-z]+)+$" },
-        "params": { "type": "object", "default": {} }
-      },
-      "additionalProperties": false
-    },
-    "response": {
-      "type": "object",
-      "required": ["v", "id", "type"],
-      "properties": {
-        "v": { "const": "gabp/1" },
-        "id": { "$ref": "#/$defs/uuid" },
-        "type": { "const": "response" },
-        "result": {},
-        "error": { "$ref": "#/$defs/error" }
-      },
-      "allOf": [
-        { "not": { "required": ["result", "error"] } },
-        { "anyOf": [{ "required": ["result"] }, { "required": ["error"] }] }
-      ],
-      "additionalProperties": false
-    },
-    "event": {
-      "type": "object",
-      "required": ["v", "id", "type", "channel", "seq", "payload"],
-      "properties": {
-        "v": { "const": "gabp/1" },
-        "id": { "$ref": "#/$defs/uuid" },
-        "type": { "const": "event" },
-        "channel": { "type": "string", "minLength": 1 },
-        "seq": { "type": "integer", "minimum": 0 },
-        "payload": {}
-      },
-      "additionalProperties": false
-    }
-  }
-}
-```
-
-### SCHEMA/1.0/methods/session.hello.request.json
-
-```json
-{
-  "$id": "https://gabp.dev/schema/1.0/methods/session.hello.request.json",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "required": ["v", "id", "type", "method", "params"],
-  "properties": {
-    "v": { "const": "gabp/1" },
-    "id": { "type": "string", "format": "uuid" },
-    "type": { "const": "request" },
-    "method": { "const": "session/hello" },
-    "params": {
-      "type": "object",
-      "required": ["token", "bridgeVersion", "platform", "launchId"],
-      "properties": {
-        "token": { "type": "string", "minLength": 1 },
-        "bridgeVersion": { "type": "string" },
-        "platform": { "type": "string", "enum": ["windows", "macos", "linux"] },
-        "launchId": { "type": "string" }
-      },
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false
-}
-```
-
-### SCHEMA/1.0/methods/session.welcome.response.json
-
-```json
-{
-  "$id": "https://gabp.dev/schema/1.0/methods/session.welcome.response.json",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "required": ["v", "id", "type", "result"],
-  "properties": {
-    "v": { "const": "gabp/1" },
-    "id": { "type": "string", "format": "uuid" },
-    "type": { "const": "response" },
-    "result": {
-      "type": "object",
-      "required": ["agentId", "app", "capabilities", "schemaVersion"],
-      "properties": {
-        "agentId": { "type": "string" },
-        "app": {
-          "type": "object",
-          "required": ["name", "version"],
-          "properties": {
-            "name": { "type": "string" },
-            "version": { "type": "string" }
-          },
-          "additionalProperties": false
-        },
-        "capabilities": {
-          "$ref": "../common/capabilities.schema.json"
-        },
-        "schemaVersion": { "type": "string", "pattern": "^1\\.\\d+(?:\\.\\d+)?$" }
-      },
-      "additionalProperties": false
-    }
-  },
-  "additionalProperties": false
-}
-```
-
-### SCHEMA/1.0/common/tool.schema.json
-
-```json
-{
-  "$id": "https://gabp.dev/schema/1.0/common/tool.schema.json",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object",
-  "required": ["name", "title", "description", "inputSchema", "outputSchema"],
-  "properties": {
-    "name": { "type": "string", "pattern": "^[a-z0-9_.-]+$" },
-    "title": { "type": "string" },
-    "description": { "type": "string" },
-    "inputSchema": { "type": "object" },
-    "outputSchema": { "type": "object" },
-    "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
-  },
-  "additionalProperties": false
-}
-```
+Event message schemas are in [SCHEMA/1.0/events/](SCHEMA/1.0/events/).
 
 ## AsyncAPI Implementation (Optional)
 
-Publish a minimal AsyncAPI file so tooling can render event channels:
-
-```yaml
-asyncapi: 3.0.0
-info:
-  title: GABP Events
-  version: 1.0.0
-channels:
-  events/{channel}:
-    address: events/{channel}
-    messages:
-      eventMessage:
-        payload:
-          $ref: https://gabp.dev/schema/1.0/events/event.message.json
-```
+If AsyncAPI documentation is provided, refer to the canonical file (e.g. `asyncapi.yaml`) at the root or docs directory for the latest event channel definitions.
 
 ## Transport and Security Specifications
 
-### SPEC/1.0/transport.md
+See [SPEC/1.0/transport.md](SPEC/1.0/transport.md) for details.  
+Platform-specific bridge configuration examples are kept in the documentation and config files—refer to those for current formats.
 
-Document the supported transport methods:
+## Versioning Policy
 
-- **Allowed transports**: stdio, TCP 127.0.0.1, or named pipe/Unix socket
-- **Default framing**: LSP headers
-- **Default TCP bind**: 127.0.0.1, ephemeral port
-- **Authentication**: Shared token read-only from config file written by bridge
+Consult [VERSIONING.md](VERSIONING.md) for up-to-date versioning policy.
 
-### Platform-Specific Config Locations
+## CI Validation
 
-- **Windows**: `%APPDATA%\gabp\bridge.json`
-- **macOS**: `~/Library/Application Support/gabp/bridge.json`
-- **Linux**: `~/.config/gabp/bridge.json`
-
-File mode MUST restrict access to the user. Token rotates per launch unless configured otherwise.
-
-### Example Config File
-
-```json
-{
-  "token": "<random-128-bit-hex>",
-  "port": 38917
-}
-```
-
-## Versioning Policy (VERSIONING.md)
-
-- `v:"gabp/1"` is the wire major version
-- Only additive fields and new methods allowed in 1.x series
-- Breaking changes require `gabp/2` and new schema folder
-- Repository uses SemVer for releases
-- Tag `v1.0.0` for the first stable release
-
-## CI Validation (.github/workflows/validate.yml)
-
-Implement automated validation:
-
-- Run AJV over EXAMPLES and CONFORMANCE directories
-- Fail if any example violates its schema
-- Optionally run Spectral rules for consistency checking
-
-### Minimal CI Workflow
-
-```yaml
-name: validate
-on: [push, pull_request]
-jobs:
-  ajv:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - run: npm i -g ajv-cli@5
-      - run: |
-          ajv -s SCHEMA/1.0/envelope.schema.json -d 'EXAMPLES/1.0/**/*.json'
-          ajv -s SCHEMA/1.0/envelope.schema.json -d 'CONFORMANCE/1.0/valid/*.json'
-          ajv -s SCHEMA/1.0/envelope.schema.json -d 'CONFORMANCE/1.0/invalid/*.json' --invalid
-```
+Validation workflow is defined in [.github/workflows/validate.yml](.github/workflows/validate.yml).  
+Always refer to the workflow file for current validation logic.
 
 ## Conformance Test Suite
 
-### Valid Examples
+Valid and invalid examples are maintained in:
+- [EXAMPLES/1.0/](EXAMPLES/1.0/) for protocol message examples
+- [CONFORMANCE/1.0/valid/](CONFORMANCE/1.0/valid/) and [CONFORMANCE/1.0/invalid/](CONFORMANCE/1.0/invalid/) for conformance testing
 
-- Complete handshake sequences
-- Tool call examples
-- Event stream samples
+Consult these folders for up-to-date cases.
 
-### Invalid Examples
+## Method and Error Registry
 
-- Missing required `id` field
-- Both `result` and `error` in response
-- Event messages with `method` field
-- Other documented failure cases
-
-## Method and Error Registry (SPEC/1.0/registry.md)
-
-### Method Naming Convention
-
-- Format: `segment/segment` (lowercase)
-- Reserved core methods as specified
-
-### Error Code Alignment
-
-Follow JSON-RPC conventions for familiarity:
-
-- `-32600`: Invalid request
-- `-32601`: Method not found
-- `-32602`: Invalid params
-- `-32603`: Internal error
-- `-32000` to `-32099`: Server errors reserved for bridge/mod
-
-### URI Scheme
-
-- Format: `gabp://<namespace>/<resource>`
-- Maintain table of reserved namespaces
+Method conventions, error codes, and URI schemes are described in [SPEC/1.0/registry.md](SPEC/1.0/registry.md).
 
 ## Distribution and Packaging
 
-### NPM Package
-
-- Publish `packages/js/gabp-schemas` to npm for easy import
-- Optionally add `gabp-examples` package for test fixtures
-
-### GitHub Pages
-
-- Enable GitHub Pages to host schemas at stable URLs matching `$id` values
+See [packages/js/gabp-schemas/README.md](packages/js/gabp-schemas/README.md) for npm usage and distribution details.
 
 ## Release Process Checklist
 
