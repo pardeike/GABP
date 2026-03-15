@@ -13,8 +13,20 @@ You may also pass paths relative to the current schema version, such as `common/
 ## Module Path
 
 ```text
-the current module path declared in `go.mod`
+github.com/pardeike/GABP/packages/go/schemas
 ```
+
+## Releases
+
+This package is released as a Go subdirectory module.
+
+That means the version tag lives under the module directory prefix, for example:
+
+```text
+packages/go/schemas/v1.0.3
+```
+
+Go tooling resolves that tag to the module path declared in `go.mod`.
 
 ## API
 
@@ -32,7 +44,7 @@ package main
 import (
     "fmt"
 
-    gabpschemas "path/to/gabp/schemas"
+    gabpschemas "github.com/pardeike/GABP/packages/go/schemas"
 )
 
 func main() {

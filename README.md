@@ -148,7 +148,7 @@ It embeds the canonical `SCHEMA/1.0` tree and exposes a small access API for rea
 
 The repo now includes a Go schema package scaffold at [packages/go/schemas](packages/go/schemas/README.md).
 
-It carries an embedded copy of the versioned schema tree for Go consumers and includes a sync script to refresh that embedded copy from the canonical `SCHEMA/1.0` source.
+It carries an embedded copy of the versioned schema tree for Go consumers and includes a sync script to refresh that embedded copy from the canonical `SCHEMA/1.0` source. Go module releases use subdirectory-prefixed tags such as `packages/go/schemas/v1.0.3`.
 
 ## Contributing
 

@@ -15,6 +15,11 @@ permissions:
 
 jobs:
   verify-package:
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'release' &&
+       github.event.release.prerelease == false &&
+       !contains(github.event.release.tag_name, '/'))
     runs-on: ubuntu-latest
 
     defaults:
@@ -36,7 +41,7 @@ jobs:
   publish-to-nuget:
     needs: verify-package
     if: |
-      (github.event_name == 'release' && github.event.release.prerelease == false) ||
+      (github.event_name == 'release' && github.event.release.prerelease == false && !contains(github.event.release.tag_name, '/')) ||
       (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     runs-on: ubuntu-latest
 
