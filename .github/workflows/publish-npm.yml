@@ -1,0 +1,92 @@
+name: Publish gabp-schemas
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-package:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/js/gabp-schemas
+
+    outputs:
+      package_version: ${{ steps.package-version.outputs.version }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+        cache: npm
+        cache-dependency-path: packages/js/gabp-schemas/package-lock.json
+
+    - name: Read package version
+      id: package-version
+      run: |
+        echo "version=$(node -p 'require(\"./package.json\").version')" >> "$GITHUB_OUTPUT"
+
+    - name: Install package dependencies
+      run: npm ci
+
+    - name: Run package tests
+      run: npm test
+
+    - name: Verify publishable tarball
+      run: npm pack --dry-run --json
+
+  publish-to-npm:
+    needs: verify-package
+    if: github.event_name == 'release' && github.event.release.prerelease == false
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    defaults:
+      run:
+        working-directory: packages/js/gabp-schemas
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+        registry-url: 'https://registry.npmjs.org'
+        cache: npm
+        cache-dependency-path: packages/js/gabp-schemas/package-lock.json
+
+    - name: Verify release tag matches package version
+      env:
+        PACKAGE_VERSION: ${{ needs.verify-package.outputs.package_version }}
+        RELEASE_TAG: ${{ github.event.release.tag_name }}
+      run: |
+        if [ "$RELEASE_TAG" != "v$PACKAGE_VERSION" ]; then
+          echo "Release tag $RELEASE_TAG does not match package version v$PACKAGE_VERSION" >&2
+          exit 1
+        fi
+
+    - name: Install package dependencies
+      run: npm ci
+
+    - name: Run package tests
+      run: npm test
+
+    - name: Verify publishable tarball
+      run: npm pack --dry-run --json
+
+    - name: Publish package to npm
+      run: npm publish --access public

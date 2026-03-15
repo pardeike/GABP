@@ -7,7 +7,8 @@ const path = require('path');
 const ajv = new Ajv({ 
   allErrors: true,
   verbose: true,
-  strict: false 
+  strict: false,
+  validateSchema: false
 });
 addFormats(ajv);
 
@@ -72,6 +73,29 @@ function loadSchemas() {
 // Load all schemas
 const schemas = loadSchemas();
 
+function allSchemas() {
+  return [
+    schemas.envelope,
+    ...Object.values(schemas.common),
+    ...Object.values(schemas.events),
+    ...Object.values(schemas.methods)
+  ].filter(Boolean);
+}
+
+function registerSchemas() {
+  for (const schema of allSchemas()) {
+    if (!schema.$id) {
+      continue;
+    }
+
+    if (!ajv.getSchema(schema.$id)) {
+      ajv.addSchema(schema, schema.$id);
+    }
+  }
+}
+
+registerSchemas();
+
 // Compile validators
 const validators = new Map();
 
@@ -97,7 +121,7 @@ function getValidator(schemaName) {
     throw new Error(`Schema not found: ${schemaName}`);
   }
 
-  const validator = ajv.compile(schema);
+  const validator = schema.$id ? ajv.getSchema(schema.$id) : ajv.compile(schema);
   validators.set(schemaName, validator);
   return validator;
 }

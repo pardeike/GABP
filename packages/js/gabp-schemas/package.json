@@ -1,6 +1,6 @@
 {
   "name": "gabp-schemas",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.1",
   "description": "JSON Schemas for the Game Agent Bridge Protocol (GABP)",
   "main": "index.js",
   "types": "index.d.ts",
@@ -13,6 +13,7 @@
   "scripts": {
     "build": "node build.js",
     "test": "node test.js",
+    "prepack": "npm run build && npm test",
     "validate": "ajv -s schemas/envelope.schema.json -d '../../EXAMPLES/1.0/**/*.json'"
   },
   "keywords": [

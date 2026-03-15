@@ -1,0 +1,43 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/resources.read.response.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "resources/read Response",
+  "description": "Response schema for reading resource content",
+  "type": "object",
+  "required": ["v", "id", "type", "result"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Request identifier this response corresponds to"
+    },
+    "type": {
+      "const": "response",
+      "description": "Message type"
+    },
+    "result": {
+      "type": "object",
+      "required": ["content"],
+      "properties": {
+        "content": {
+          "description": "Resource content (string for text, base64 for binary)"
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "MIME type of the content"
+        },
+        "encoding": {
+          "type": "string",
+          "enum": ["utf-8", "base64", "ascii", "binary"],
+          "description": "Content encoding"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

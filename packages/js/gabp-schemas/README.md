@@ -8,6 +8,8 @@ JSON Schemas for the Game Agent Bridge Protocol (GABP) - a protocol for communic
 npm install gabp-schemas
 ```
 
+The published package bundles the full `SCHEMA/1.0` tree from the GABP repository so JavaScript consumers validate against the same versioned artifacts used by the protocol release.
+
 ## Usage
 
 ### Basic Validation
@@ -70,6 +72,24 @@ const message: GabpMessage = {
 };
 
 const result: ValidationResult = validateMessage(message);
+```
+
+You can validate specific protocol methods as well:
+
+```javascript
+const { validateWithSchema } = require('gabp-schemas');
+
+const stateGetRequest = {
+  v: 'gabp/1',
+  id: '550e8400-e29b-41d4-a716-446655440010',
+  type: 'request',
+  method: 'state/get',
+  params: {
+    components: ['player', 'inventory']
+  }
+};
+
+const result = validateWithSchema('state.get.request', stateGetRequest);
 ```
 
 ## API Reference
@@ -160,6 +180,13 @@ Object containing all loaded schemas:
 - **resources.list.request** - List available resources
 - **resources.list.response** - Resource list response  
 - **resources.read.request** - Read resource content
+- **resources.read.response** - Read resource response
+
+#### State Management
+- **state.get.request** - Get game state request
+- **state.get.response** - Get game state response
+- **state.set.request** - Update game state request
+- **state.set.response** - Update game state response
 
 ### Event Schemas
 
@@ -264,10 +291,10 @@ if (!result.valid) {
 
 ## License
 
-Apache-2.0 - see [LICENSE](../../../LICENSES/CODE-LICENSE.txt) for details.
+Apache-2.0 - see [LICENSE](./LICENSE) for details.
 
 ## Links
 
-- [GABP Specification](../../../README.md)
+- [GABP Specification](https://github.com/pardeike/GABP/blob/main/README.md)
 - [GitHub Repository](https://github.com/pardeike/GABP)
 - [Issue Tracker](https://github.com/pardeike/GABP/issues)

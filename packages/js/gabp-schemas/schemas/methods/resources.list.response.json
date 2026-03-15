@@ -26,10 +26,35 @@
         "resources": {
           "type": "array",
           "items": {
-            "type": "string",
-            "format": "uri"
+            "type": "object",
+            "required": ["uri", "name"],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "format": "uri",
+                "description": "Resource URI"
+              },
+              "name": {
+                "type": "string",
+                "description": "Human-readable resource name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the resource"
+              },
+              "mimeType": {
+                "type": "string",
+                "description": "MIME type hint"
+              },
+              "size": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Size in bytes (for file resources)"
+              }
+            },
+            "additionalProperties": false
           },
-          "description": "Array of available resource URIs"
+          "description": "Array of available resource objects"
         }
       },
       "additionalProperties": false
