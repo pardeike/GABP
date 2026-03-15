@@ -2,6 +2,11 @@ name: Publish gabp-schemas
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag to publish, for example v1.0.0
+        required: false
+        type: string
   release:
     types: [published]
 
@@ -17,7 +22,7 @@ jobs:
         working-directory: packages/js/gabp-schemas
 
     outputs:
-      package_version: ${{ steps.package-version.outputs.version }}
+      package_version: ${{ steps.package_version.outputs.version }}
 
     steps:
     - name: Checkout repository
@@ -31,7 +36,7 @@ jobs:
         cache-dependency-path: packages/js/gabp-schemas/package-lock.json
 
     - name: Read package version
-      id: package-version
+      id: package_version
       run: |
         echo "version=$(node -p 'require(\"./package.json\").version')" >> "$GITHUB_OUTPUT"
 
@@ -46,7 +51,9 @@ jobs:
 
   publish-to-npm:
     needs: verify-package
-    if: github.event_name == 'release' && github.event.release.prerelease == false
+    if: |
+      (github.event_name == 'release' && github.event.release.prerelease == false) ||
+      (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     runs-on: ubuntu-latest
 
     permissions:
@@ -72,7 +79,7 @@ jobs:
     - name: Verify release tag matches package version
       env:
         PACKAGE_VERSION: ${{ needs.verify-package.outputs.package_version }}
-        RELEASE_TAG: ${{ github.event.release.tag_name }}
+        RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
       run: |
         if [ "$RELEASE_TAG" != "v$PACKAGE_VERSION" ]; then
           echo "Release tag $RELEASE_TAG does not match package version v$PACKAGE_VERSION" >&2
