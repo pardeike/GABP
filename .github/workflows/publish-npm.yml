@@ -72,7 +72,7 @@ jobs:
       env:
         RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
       run: |
-        PACKAGE_VERSION="$(node -p 'require(\"./package.json\").version')"
+        PACKAGE_VERSION="$(node -p "require('./package.json').version")"
         if [ "$RELEASE_TAG" != "v$PACKAGE_VERSION" ]; then
           echo "Release tag $RELEASE_TAG does not match package version v$PACKAGE_VERSION" >&2
           exit 1
