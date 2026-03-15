@@ -1,0 +1,88 @@
+name: Release Go Schema Module
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic version without the leading v, for example 1.1.0
+        required: true
+        type: string
+      target_ref:
+        description: Branch, tag, or commit to tag
+        required: false
+        default: main
+        type: string
+      warm_proxy:
+        description: Warm the public Go proxy after pushing the tag
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  create-go-module-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6.0.2
+      with:
+        ref: ${{ inputs.target_ref }}
+        fetch-depth: 0
+
+    - name: Setup Go
+      uses: actions/setup-go@v6.0.0
+      with:
+        go-version-file: packages/go/schemas/go.mod
+
+    - name: Validate release inputs
+      env:
+        VERSION: ${{ inputs.version }}
+      run: |
+        case "$VERSION" in
+          ''|*[!0-9.]*|*.*.*.*)
+            echo "Version must be a semantic version like 1.1.0" >&2
+            exit 1
+            ;;
+        esac
+
+        TAG="packages/go/schemas/v$VERSION"
+        echo "GO_SCHEMA_TAG=$TAG" >> "$GITHUB_ENV"
+
+    - name: Verify tag does not already exist
+      run: |
+        if git rev-parse "$GO_SCHEMA_TAG" >/dev/null 2>&1; then
+          echo "Tag $GO_SCHEMA_TAG already exists locally." >&2
+          exit 1
+        fi
+
+        if git ls-remote --exit-code --tags origin "refs/tags/$GO_SCHEMA_TAG" >/dev/null 2>&1; then
+          echo "Tag $GO_SCHEMA_TAG already exists on origin." >&2
+          exit 1
+        fi
+
+    - name: Verify Go module package state
+      working-directory: packages/go/schemas
+      run: |
+        test -f go.mod
+        test -f schemas.go
+        test -f schema/1.0/envelope.schema.json
+        go test ./...
+
+    - name: Create and push tag
+      env:
+        TAG: ${{ env.GO_SCHEMA_TAG }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git tag "$TAG"
+        git push origin "$TAG"
+
+    - name: Warm Go proxy
+      if: inputs.warm_proxy
+      env:
+        VERSION: ${{ inputs.version }}
+      run: |
+        GOPROXY=proxy.golang.org go list -m github.com/pardeike/GABP/packages/go/schemas@v$VERSION

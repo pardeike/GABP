@@ -28,6 +28,9 @@ packages/go/schemas/v1.0.3
 
 Go tooling resolves that tag to the module path declared in `go.mod`.
 
+If you want to automate that, use the repository workflow `Release Go Schema Module`,
+which creates and pushes the prefixed module tag for you.
+
 ## API
 
 - `FS()` returns an `fs.FS` rooted at `schema/`
