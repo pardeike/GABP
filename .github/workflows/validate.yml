@@ -217,7 +217,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Pack .NET schema package
-      run: dotnet pack Gabp.Schemas.csproj --configuration Release --output "$GITHUB_WORKSPACE/artifacts/dotnet"
+      run: dotnet pack Gabp.Schemas.csproj --configuration Release
 
   verify-go-schema-package:
     runs-on: ubuntu-latest

@@ -1,6 +1,6 @@
 {
   "name": "gabp-schemas",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "JSON Schemas for the Game Agent Bridge Protocol (GABP)",
   "main": "index.js",
   "types": "index.d.ts",

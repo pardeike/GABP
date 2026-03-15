@@ -31,7 +31,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Pack .NET schema package
-      run: dotnet pack Gabp.Schemas.csproj --configuration Release --output "$GITHUB_WORKSPACE/artifacts/dotnet"
+      run: dotnet pack Gabp.Schemas.csproj --configuration Release
 
   publish-to-nuget:
     needs: verify-package
@@ -64,13 +64,13 @@ jobs:
         fi
 
     - name: Pack .NET schema package
-      run: dotnet pack Gabp.Schemas.csproj --configuration Release --output "$GITHUB_WORKSPACE/artifacts/dotnet"
+      run: dotnet pack Gabp.Schemas.csproj --configuration Release
 
     - name: Publish package to NuGet
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
-        dotnet nuget push "$GITHUB_WORKSPACE"/artifacts/dotnet/*.nupkg \
+        dotnet nuget push bin/Release/*.nupkg \
           --api-key "$NUGET_API_KEY" \
           --source "https://api.nuget.org/v3/index.json" \
           --skip-duplicate

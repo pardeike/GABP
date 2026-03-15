@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: GABP Events
-  version: 1.0.2
+  version: 1.0.3
   description: |
     AsyncAPI specification for GABP (Game Agent Bridge Protocol) events.
     

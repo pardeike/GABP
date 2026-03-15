@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## 1.0.3 - 2026-03-15
+
+### Fixed
+- Removed the custom `dotnet pack --output` path from the NuGet workflow and now publish from the default package output directory.
+
 ## 1.0.2 - 2026-03-15
 
 ### Fixed
