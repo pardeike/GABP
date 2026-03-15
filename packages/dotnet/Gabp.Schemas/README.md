@@ -2,21 +2,28 @@
 
 Versioned GABP schema assets for .NET consumers.
 
-This package embeds the canonical `SCHEMA/1.0` tree from the `GABP` repository so .NET projects can validate against the same published protocol artifacts without copying schema files locally.
+This package embeds the canonical `SCHEMA/1.0` tree from this repository and exposes those files through `SchemaAssets`, so .NET consumers can read the same versioned artifacts used by the protocol release.
 
-## Package Scope
+## Package Identity
 
-The package is intentionally narrow. It provides:
+- NuGet package ID: `Gabp.Schemas`
+- C# namespace: `Gabp.Schemas`
 
-- embedded schema assets for the current GABP release
-- a small access API for opening or reading schema files
-- stable versioned paths such as `1.0/envelope.schema.json`
+If you are consuming the published package:
 
-It does not provide transport logic, request handling, or higher-level protocol runtime code.
+```bash
+dotnet add package Gabp.Schemas
+```
 
-NuGet package ID: `Gabp.Schemas`
+## API Surface
 
-C# namespace: `Gabp.Schemas`
+- `SchemaAssets.CurrentVersion` returns the bundled schema version (`1.0`).
+- `SchemaAssets.ListPaths()` returns all embedded asset paths.
+- `SchemaAssets.Exists(path)` checks whether a schema asset exists.
+- `SchemaAssets.Open(path)` opens an embedded asset as a `Stream`.
+- `SchemaAssets.ReadAllText(path)` reads an embedded asset as UTF-8 text.
+
+Paths may be versioned, such as `1.0/methods/tools.call.request.json`, or relative to the current schema version, such as `methods/tools.call.request.json`.
 
 ## Usage
 
@@ -26,14 +33,17 @@ using Gabp.Schemas;
 var envelopeSchema = SchemaAssets.ReadAllText("envelope.schema.json");
 var toolSchema = SchemaAssets.ReadAllText("common/tool.schema.json");
 
+if (SchemaAssets.Exists("1.0/methods/tools.call.request.json"))
+{
+    using var stream = SchemaAssets.Open("methods/tools.call.request.json");
+}
+
 foreach (var path in SchemaAssets.ListPaths())
 {
     Console.WriteLine(path);
 }
 ```
 
-You may pass either a versioned path such as `1.0/methods/tools.call.request.json` or a path relative to the current schema version such as `methods/tools.call.request.json`.
+## Scope
 
-## Source Of Truth
-
-The canonical source of truth remains the top-level `SCHEMA/1.0` directory in the `GABP` repository. This package simply exposes those artifacts to .NET consumers.
+This package only ships schema assets and a small access API. It does not implement transport, request handling, or a higher-level GABP runtime.

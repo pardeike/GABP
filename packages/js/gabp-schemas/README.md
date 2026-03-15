@@ -1,85 +1,64 @@
 # gabp-schemas
 
-JSON Schemas for the Game Agent Bridge Protocol (GABP) - a protocol for communication between game mods and external automation tools.
+Versioned GABP JSON Schemas for Node.js and TypeScript.
 
-## Installation
+The package bundles the canonical `SCHEMA/1.0` tree from this repository and preloads those schemas into AJV, so consumers validate against the same artifacts used by the protocol release.
+
+## Install
 
 ```bash
 npm install gabp-schemas
 ```
 
-The published package bundles the full `SCHEMA/1.0` tree from the GABP repository so JavaScript consumers validate against the same versioned artifacts used by the protocol release.
+## API Surface
+
+- `validateMessage(message)` validates the shared envelope schema only.
+- `validateRequest(message)` validates a request against the envelope and, when available, the matching `*.request` method schema.
+- `validateResponse(message)` validates response envelopes.
+- `validateEvent(message)` validates an event against the envelope and `event.message`.
+- `validateWithSchema(schemaName, data)` validates against a specific schema name.
+- `getValidator(schemaName)` returns the compiled AJV validator.
+- `schemas` exposes the loaded raw schemas.
+- `ajv` exposes the configured AJV instance.
+
+## Schema Names
+
+Use these schema names with `getValidator()` and `validateWithSchema()`:
+
+- `envelope`
+- `session.hello.request`
+- `tools.call.response`
+- `event.message`
+- `tool`, `error`, `capabilities`
 
 ## Usage
 
-### Basic Validation
-
 ```javascript
-const { validateMessage, schemas } = require('gabp-schemas');
+const {
+  validateRequest,
+  validateWithSchema,
+  schemas,
+} = require('gabp-schemas');
 
-// Validate a GABP message
-const message = {
-  "v": "gabp/1",
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "type": "request",
-  "method": "session/hello",
-  "params": {
-    "token": "abc123...",
-    "bridgeVersion": "1.0.0",
-    "platform": "windows",
-    "launchId": "session-123"
-  }
-};
-
-const result = validateMessage(message);
-if (result.valid) {
-  console.log('Message is valid!');
-} else {
-  console.error('Validation errors:', result.errors);
-}
-```
-
-### Advanced Usage
-
-```javascript
-const { getValidator, schemas } = require('gabp-schemas');
-
-// Get specific validator
-const sessionHelloValidator = getValidator('session.hello.request');
-const isValid = sessionHelloValidator(message);
-
-// Access raw schemas
-console.log(schemas.envelope);
-console.log(schemas.methods['session.hello.request']);
-```
-
-### TypeScript Support
-
-```typescript
-import { validateMessage, GabpMessage, ValidationResult } from 'gabp-schemas';
-
-const message: GabpMessage = {
-  v: "gabp/1",
-  id: "550e8400-e29b-41d4-a716-446655440000",
-  type: "request",
-  method: "session/hello",
+const helloRequest = {
+  v: 'gabp/1',
+  id: '550e8400-e29b-41d4-a716-446655440000',
+  type: 'request',
+  method: 'session/hello',
   params: {
-    token: "abc123...",
-    bridgeVersion: "1.0.0", 
-    platform: "windows",
-    launchId: "session-123"
+    token: 'abc123...',
+    bridgeVersion: '1.0.0',
+    platform: 'windows',
+    launchId: 'session-123'
   }
 };
 
-const result: ValidationResult = validateMessage(message);
-```
+const requestResult = validateRequest(helloRequest);
+if (!requestResult.valid) {
+  console.error(requestResult.errors);
+}
 
-You can validate specific protocol methods as well:
-
-```javascript
-const { validateWithSchema } = require('gabp-schemas');
-
-const stateGetRequest = {
+const stateGetResult = validateWithSchema('state.get.request', {
   v: 'gabp/1',
   id: '550e8400-e29b-41d4-a716-446655440010',
   type: 'request',
@@ -87,213 +66,44 @@ const stateGetRequest = {
   params: {
     components: ['player', 'inventory']
   }
-};
+});
 
-const result = validateWithSchema('state.get.request', stateGetRequest);
+console.log(stateGetResult.valid);
+console.log(schemas.envelope.$id);
 ```
 
-## API Reference
+## TypeScript
 
-### Functions
+Type declarations are bundled with the package:
 
-#### `validateMessage(message: any): ValidationResult`
+```typescript
+import {
+  validateRequest,
+  type GabpMessage,
+  type ValidationResult,
+} from 'gabp-schemas';
 
-Validates a GABP message against the envelope schema.
-
-**Parameters:**
-- `message` - The message object to validate
-
-**Returns:** `ValidationResult` object with:
-- `valid: boolean` - Whether the message is valid
-- `errors?: ErrorObject[]` - Validation errors (if invalid)
-
-#### `getValidator(schemaName: string): ValidateFunction`
-
-Gets a compiled validator for a specific schema.
-
-**Parameters:**
-- `schemaName` - Schema identifier (e.g., 'envelope', 'session.hello.request')
-
-**Returns:** Compiled AJV validator function
-
-#### `validateWithSchema(schemaName: string, data: any): ValidationResult`
-
-Validates data against a specific schema.
-
-**Parameters:**
-- `schemaName` - Schema identifier
-- `data` - Data to validate
-
-**Returns:** `ValidationResult` object
-
-### Properties
-
-#### `schemas: SchemaCollection`
-
-Object containing all loaded schemas:
-
-```javascript
-{
-  envelope: { /* envelope schema */ },
-  methods: {
-    'session.hello.request': { /* schema */ },
-    'session.welcome.response': { /* schema */ },
-    // ... other method schemas
-  },
-  events: {
-    'event.message': { /* schema */ }
-  },
-  common: {
-    'error': { /* schema */ },
-    'tool': { /* schema */ },
-    'capabilities': { /* schema */ }
-  }
-}
-```
-
-## Available Schemas
-
-### Core Schemas
-
-- **envelope** - Base message envelope (request/response/event)
-- **common/error** - Error object structure
-- **common/tool** - Tool metadata format
-- **common/capabilities** - Capability negotiation format
-
-### Method Schemas
-
-#### Session Management
-- **session.hello.request** - Session initialization request
-- **session.welcome.response** - Session welcome response
-
-#### Tool Management  
-- **tools.list.request** - List available tools
-- **tools.list.response** - Tools list response
-- **tools.call.request** - Invoke tool request
-- **tools.call.response** - Tool invocation response
-
-#### Event Management
-- **events.subscribe.request** - Subscribe to event channels
-- **events.unsubscribe.request** - Unsubscribe from channels
-
-#### Resource Management
-- **resources.list.request** - List available resources
-- **resources.list.response** - Resource list response  
-- **resources.read.request** - Read resource content
-- **resources.read.response** - Read resource response
-
-#### State Management
-- **state.get.request** - Get game state request
-- **state.get.response** - Get game state response
-- **state.set.request** - Update game state request
-- **state.set.response** - Update game state response
-
-### Event Schemas
-
-- **event.message** - Event message format
-
-## Examples
-
-### Session Handshake
-
-```javascript
-// Session hello request
-const helloRequest = {
-  "v": "gabp/1",
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "type": "request",
-  "method": "session/hello",
-  "params": {
-    "token": "a1b2c3d4e5f6789012345678901234567890abcdef",
-    "bridgeVersion": "1.0.0",
-    "platform": "windows",
-    "launchId": "550e8400-e29b-41d4-a716-446655440001"
+const message: GabpMessage = {
+  v: 'gabp/1',
+  id: '550e8400-e29b-41d4-a716-446655440000',
+  type: 'request',
+  method: 'session/hello',
+  params: {
+    token: 'abc123...',
+    bridgeVersion: '1.0.0',
+    platform: 'windows',
+    launchId: 'session-123'
   }
 };
 
-// Session welcome response
-const welcomeResponse = {
-  "v": "gabp/1", 
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "type": "response",
-  "result": {
-    "agentId": "minecraft-mod-v2.1",
-    "app": {
-      "name": "Minecraft",
-      "version": "1.20.4"
-    },
-    "capabilities": {
-      "methods": ["tools/list", "tools/call"],
-      "events": ["player/move"],
-      "resources": ["gabp://game/world"]
-    },
-    "schemaVersion": "1.0"
-  }
-};
+const result: ValidationResult = validateRequest(message);
 ```
 
-### Tool Operations
+## Included Assets
 
-```javascript
-// List tools request
-const toolsListRequest = {
-  "v": "gabp/1",
-  "id": "550e8400-e29b-41d4-a716-446655440010", 
-  "type": "request",
-  "method": "tools/list",
-  "params": {}
-};
+The published tarball includes:
 
-// Call tool request
-const toolCallRequest = {
-  "v": "gabp/1",
-  "id": "550e8400-e29b-41d4-a716-446655440011",
-  "type": "request", 
-  "method": "tools/call",
-  "params": {
-    "name": "inventory/get",
-    "arguments": {
-      "playerId": "steve"
-    }
-  }
-};
-```
-
-### Event Messages
-
-```javascript
-// Event message
-const eventMessage = {
-  "v": "gabp/1",
-  "id": "550e8400-e29b-41d4-a716-446655440020",
-  "type": "event",
-  "channel": "player/move",
-  "seq": 42,
-  "payload": {
-    "playerId": "steve", 
-    "position": {"x": 100, "y": 64, "z": 200}
-  }
-};
-```
-
-## Error Handling
-
-```javascript
-const result = validateMessage(invalidMessage);
-
-if (!result.valid) {
-  result.errors.forEach(error => {
-    console.log(`Error at ${error.instancePath}: ${error.message}`);
-    console.log(`Invalid value:`, error.data);
-  });
-}
-```
-
-## License
-
-Apache-2.0 - see [LICENSE](./LICENSE) for details.
-
-## Links
-
-- [GABP Specification](../../../README.md)
-- [Repository Root](../../..)
+- `index.js`
+- `index.d.ts`
+- `schemas/`
+- `README.md`

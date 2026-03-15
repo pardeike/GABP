@@ -1,14 +1,8 @@
-# gabp-schemas-go
+# GABP Go Schemas
 
-This package exposes the versioned `GABP` schema artifacts as embedded files for Go consumers.
+Versioned GABP schema assets for Go consumers.
 
-The embedded tree is rooted at `schema/`, so callers use versioned paths such as:
-
-- `1.0/envelope.schema.json`
-- `1.0/common/tool.schema.json`
-- `1.0/methods/tools.call.request.json`
-
-You may also pass paths relative to the current schema version, such as `common/tool.schema.json`.
+This module embeds a copy of the canonical `SCHEMA/1.0` tree from this repository, rooted at `schema/`, so Go code can read the same versioned artifacts used by the protocol release.
 
 ## Module Path
 
@@ -16,28 +10,30 @@ You may also pass paths relative to the current schema version, such as `common/
 github.com/pardeike/GABP/packages/go/schemas
 ```
 
-## Releases
+When consuming a tagged release:
 
-This package is released as a Go subdirectory module.
-
-That means the version tag lives under the module directory prefix, for example:
-
-```text
-packages/go/schemas/v1.0.3
+```bash
+go get github.com/pardeike/GABP/packages/go/schemas@latest
 ```
 
-Go tooling resolves that tag to the module path declared in `go.mod`.
+Releases use subdirectory-prefixed tags such as `packages/go/schemas/v1.0.3`.
 
-If you want to automate that, use the repository workflow `Release Go Schema Module`,
-which creates and pushes the prefixed module tag for you.
+## API Surface
 
-## API
+- `CurrentVersion` is the bundled schema version (`1.0`).
+- `FS()` returns an `fs.FS` rooted at `schema/`.
+- `ReadFile(name)` reads a schema file.
+- `Open(name)` opens a schema file.
+- `Exists(name)` reports whether a schema path exists.
+- `List()` returns all embedded schema and README paths.
 
-- `FS()` returns an `fs.FS` rooted at `schema/`
-- `ReadFile(name)` reads a schema file by versioned path
-- `Open(name)` opens a schema file by versioned path
-- `Exists(name)` checks whether a schema path exists
-- `List()` returns all embedded schema and README paths
+You may pass either a versioned path such as `1.0/envelope.schema.json` or a path relative to the current schema version such as `common/tool.schema.json`.
+
+Examples of versioned paths:
+
+- `1.0/envelope.schema.json`
+- `1.0/common/tool.schema.json`
+- `1.0/methods/tools.call.request.json`
 
 ## Usage
 
@@ -51,11 +47,12 @@ import (
 )
 
 func main() {
-    data, err := gabpschemas.ReadFile("1.0/envelope.schema.json")
+    data, err := gabpschemas.ReadFile("methods/tools.call.request.json")
     if err != nil {
         panic(err)
     }
 
+    fmt.Println(gabpschemas.CurrentVersion)
     fmt.Println(string(data))
 }
 ```

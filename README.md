@@ -120,19 +120,21 @@ Basic handshake example:
 
 ## Packages
 
+The repository includes three versioned schema packages, all sourced from the canonical [`SCHEMA/1.0/`](SCHEMA/1.0/) tree.
+
 ### JavaScript/Node.js
 
-Install the schema package for easy validation:
+The [`gabp-schemas`](packages/js/gabp-schemas/README.md) package bundles the schema tree and exposes preloaded validators for Node.js and TypeScript consumers.
 
 ```bash
 npm install gabp-schemas
 ```
 
 ```javascript
-const { validateMessage } = require('gabp-schemas');
+const { validateRequest } = require('gabp-schemas');
 
-const message = { /* your GABP message */ };
-const result = validateMessage(message);
+const message = { /* your GABP request */ };
+const result = validateRequest(message);
 if (!result.valid) {
   console.error('Validation errors:', result.errors);
 }
@@ -140,15 +142,17 @@ if (!result.valid) {
 
 ### .NET
 
-The repo now includes a .NET schema package scaffold at [packages/dotnet/Gabp.Schemas](packages/dotnet/Gabp.Schemas/README.md).
+The [`Gabp.Schemas`](packages/dotnet/Gabp.Schemas/README.md) package embeds the same schema assets and exposes them through the `SchemaAssets` API for .NET consumers.
 
-It embeds the canonical `SCHEMA/1.0` tree and exposes a small access API for reading versioned schema assets from .NET consumers. The intended NuGet package ID is `Gabp.Schemas`.
+NuGet package ID: `Gabp.Schemas`
 
 ### Go
 
-The repo now includes a Go schema package scaffold at [packages/go/schemas](packages/go/schemas/README.md).
+The [`github.com/pardeike/GABP/packages/go/schemas`](packages/go/schemas/README.md) module embeds the same versioned schema assets for Go consumers.
 
-It carries an embedded copy of the versioned schema tree for Go consumers and includes a sync script to refresh that embedded copy from the canonical `SCHEMA/1.0` source. Go module releases use subdirectory-prefixed tags such as `packages/go/schemas/v1.0.3`, and the repo now includes a `Release Go Schema Module` workflow to create those tags.
+Module path: `github.com/pardeike/GABP/packages/go/schemas`
+
+Repository releases for the npm package and NuGet package use top-level tags such as `v1.0.3`. The Go module uses subdirectory-prefixed tags such as `packages/go/schemas/v1.0.3`.
 
 ## Contributing
 
