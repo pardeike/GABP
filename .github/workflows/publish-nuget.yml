@@ -17,6 +17,10 @@ jobs:
   verify-package:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: packages/dotnet/Gabp.Schemas
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6.0.2
@@ -27,10 +31,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Pack .NET schema package
-      run: |
-        dotnet pack packages/dotnet/Gabp.Schemas/Gabp.Schemas.csproj \
-          --configuration Release \
-          --output artifacts/dotnet
+      run: dotnet pack Gabp.Schemas.csproj --configuration Release --output "$GITHUB_WORKSPACE/artifacts/dotnet"
 
   publish-to-nuget:
     needs: verify-package
@@ -38,6 +39,10 @@ jobs:
       (github.event_name == 'release' && github.event.release.prerelease == false) ||
       (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/dotnet/Gabp.Schemas
 
     steps:
     - name: Checkout repository
@@ -52,23 +57,20 @@ jobs:
       env:
         RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
       run: |
-        PACKAGE_VERSION="$(dotnet msbuild packages/dotnet/Gabp.Schemas/Gabp.Schemas.csproj -nologo -getProperty:Version)"
+        PACKAGE_VERSION="$(dotnet msbuild Gabp.Schemas.csproj -nologo -getProperty:Version)"
         if [ "$RELEASE_TAG" != "v$PACKAGE_VERSION" ]; then
           echo "Release tag $RELEASE_TAG does not match package version v$PACKAGE_VERSION" >&2
           exit 1
         fi
 
     - name: Pack .NET schema package
-      run: |
-        dotnet pack packages/dotnet/Gabp.Schemas/Gabp.Schemas.csproj \
-          --configuration Release \
-          --output artifacts/dotnet
+      run: dotnet pack Gabp.Schemas.csproj --configuration Release --output "$GITHUB_WORKSPACE/artifacts/dotnet"
 
     - name: Publish package to NuGet
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
-        dotnet nuget push "artifacts/dotnet/*.nupkg" \
+        dotnet nuget push "$GITHUB_WORKSPACE"/artifacts/dotnet/*.nupkg \
           --api-key "$NUGET_API_KEY" \
           --source "https://api.nuget.org/v3/index.json" \
           --skip-duplicate

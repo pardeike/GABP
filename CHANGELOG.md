@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## 1.0.2 - 2026-03-15
+
+### Fixed
+- Restored the repository metadata required for npm trusted publishing provenance.
+- Fixed the GitHub Actions `.NET` pack steps for the `Gabp.Schemas` package.
+
 ## 1.0.1 - 2026-03-15
 
 ### Added

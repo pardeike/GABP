@@ -203,6 +203,10 @@ jobs:
   verify-dotnet-schema-package:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: packages/dotnet/Gabp.Schemas
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6.0.2
@@ -213,10 +217,7 @@ jobs:
         dotnet-version: '8.0.x'
 
     - name: Pack .NET schema package
-      run: |
-        dotnet pack packages/dotnet/Gabp.Schemas/Gabp.Schemas.csproj \
-          --configuration Release \
-          --output artifacts/dotnet
+      run: dotnet pack Gabp.Schemas.csproj --configuration Release --output "$GITHUB_WORKSPACE/artifacts/dotnet"
 
   verify-go-schema-package:
     runs-on: ubuntu-latest

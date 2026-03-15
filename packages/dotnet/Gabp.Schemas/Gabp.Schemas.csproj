@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageId>Gabp.Schemas</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>GABP Contributors</Authors>
     <Description>Versioned GABP schema assets for .NET consumers.</Description>
     <PackageTags>gabp;json-schema;game-agent-bridge-protocol</PackageTags>
