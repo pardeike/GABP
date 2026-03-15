@@ -1,0 +1,19 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440011",
+  "type": "response",
+  "result": {
+    "slots": [
+      {
+        "slot": 0,
+        "item": "diamond_sword",
+        "count": 1
+      },
+      {
+        "slot": 1,
+        "item": "bread",
+        "count": 12
+      }
+    ]
+  }
+}

@@ -199,3 +199,43 @@ jobs:
 
     - name: Verify publishable tarball
       run: npm pack --dry-run --json
+
+  verify-dotnet-schema-package:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6.0.2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5.0.0
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Pack .NET schema package
+      run: |
+        dotnet pack packages/dotnet/Gabp.Schemas/Gabp.Schemas.csproj \
+          --configuration Release \
+          --output artifacts/dotnet
+
+  verify-go-schema-package:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: packages/go/schemas
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6.0.2
+
+    - name: Setup Go
+      uses: actions/setup-go@v6.0.0
+      with:
+        go-version-file: packages/go/schemas/go.mod
+
+    - name: Refresh embedded schema copy
+      run: ./sync.sh
+
+    - name: Build Go schema package
+      run: go test ./...

@@ -29,8 +29,8 @@
       "properties": {
         "name": {
           "type": "string",
-          "pattern": "^[a-z0-9_.-]+$",
-          "description": "Tool name to invoke"
+          "pattern": "^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$",
+          "description": "Canonical native GABP tool name to invoke"
         },
         "arguments": {
           "type": "object",

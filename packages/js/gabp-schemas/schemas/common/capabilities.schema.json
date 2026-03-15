@@ -9,7 +9,7 @@
       "type": "array",
       "items": {
         "type": "string",
-        "pattern": "^[a-z]+(/[a-z]+)+$"
+        "pattern": "^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$"
       },
       "uniqueItems": true,
       "description": "List of supported method names"

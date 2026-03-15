@@ -5,7 +5,7 @@
   "result": {
     "tools": [
       {
-        "name": "inventory.get",
+        "name": "inventory/get",
         "title": "Get Player Inventory",
         "description": "Retrieves the current player's inventory contents",
         "inputSchema": {
@@ -36,7 +36,7 @@
         "tags": ["inventory", "player"]
       },
       {
-        "name": "world.place_block",
+        "name": "world/place_block",
         "title": "Place Block",
         "description": "Places a block at the specified coordinates",
         "inputSchema": {

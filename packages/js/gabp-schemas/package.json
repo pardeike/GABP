@@ -1,6 +1,6 @@
 {
   "name": "gabp-schemas",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JSON Schemas for the Game Agent Bridge Protocol (GABP)",
   "main": "index.js",
   "types": "index.d.ts",
@@ -25,17 +25,8 @@
     "automation",
     "rpc"
   ],
-  "author": "Andreas Pardeike",
+  "author": "GABP Contributors",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/pardeike/GABP",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pardeike/GABP.git",
-    "directory": "packages/js/gabp-schemas"
-  },
-  "bugs": {
-    "url": "https://github.com/pardeike/GABP/issues"
-  },
   "dependencies": {
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1"

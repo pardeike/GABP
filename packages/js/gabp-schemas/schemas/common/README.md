@@ -32,7 +32,7 @@ Defines the structure for tool definitions in tools/list responses:
   "name": "inventory/get_items",
   "title": "Get Player Items",
   "description": "Retrieve items from a player's inventory",
-  "inputSchema": { /* JSON Schema for parameters */ },
+  "inputSchema": { /* JSON Schema for arguments */ },
   "outputSchema": { /* JSON Schema for results */ },
   "tags": ["inventory", "player"]
 }
@@ -42,7 +42,7 @@ Key properties:
 - **name** - Unique tool identifier (lowercase with slashes)
 - **title** - Human-readable tool name
 - **description** - What the tool does
-- **inputSchema** - JSON Schema for tool parameters
+- **inputSchema** - JSON Schema for tool arguments
 - **outputSchema** - JSON Schema for tool results  
 - **tags** - Optional categorization tags
 
@@ -51,14 +51,14 @@ Key properties:
 Defines the structure for capability declarations in session/welcome:
 ```json
 {
-  "tools": ["inventory/get", "world/place_block"],
+  "methods": ["tools/list", "tools/call", "events/subscribe"],
   "events": ["player/move", "world/block_change"],
-  "resources": ["world/schematic", "config/settings"]
+  "resources": ["gabp://game/world/schematic", "gabp://mod/config/settings"]
 }
 ```
 
 Key properties:
-- **tools** - Array of available tool names
+- **methods** - Array of available protocol method names
 - **events** - Array of available event channel names
 - **resources** - Array of available resource URI patterns
 

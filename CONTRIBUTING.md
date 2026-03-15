@@ -33,7 +33,7 @@ Changes to files in `SPEC/1.0/`:
 
 Changes to files in `SCHEMA/1.0/`:
 
-- **Validation**: All schemas must be valid JSON Schema Draft 2020-12
+- **Validation**: All current 1.0 schemas must be valid JSON Schema Draft-07
 - **Testing**: Include both valid and invalid test cases
 - **Documentation**: Update related specification sections
 - **Breaking Changes**: Only additive changes allowed in v1.x
@@ -53,7 +53,7 @@ Changes to `EXAMPLES/1.0/` and `CONFORMANCE/1.0/`:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/pardeike/GABP.git
+   git clone <repository-url>
    cd GABP
    ```
 

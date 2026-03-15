@@ -31,6 +31,7 @@ GABP defines these key parts:
 - **[Transport & Connections](SPEC/1.0/transport.md)** - How to connect and send messages  
 - **[Security Guide](SPEC/1.0/security.md)** - Authentication and safety rules
 - **[Method Registry](SPEC/1.0/registry.md)** - Standard method names and error codes
+- **[Wire-Model Decisions](SPEC/1.0/wire-model-decisions.md)** - Canonical 1.0 wire naming and field choices
 - **[AI Implementation Guide](SPEC/1.0/ai-implementation.md)** - AI-assisted development prompts and patterns
 
 ## Schemas
@@ -101,9 +102,16 @@ Basic handshake example:
       "version": "1.20.4"
     },
     "capabilities": {
-      "tools": ["inventory/get", "world/place_block"],
+      "methods": [
+        "tools/list",
+        "tools/call",
+        "events/subscribe",
+        "events/unsubscribe",
+        "resources/list",
+        "resources/read"
+      ],
       "events": ["player/move", "world/block_change"],
-      "resources": ["world/schematic"]
+      "resources": ["gabp://game/world/schematic"]
     },
     "schemaVersion": "1.0"
   }
@@ -129,6 +137,18 @@ if (!result.valid) {
   console.error('Validation errors:', result.errors);
 }
 ```
+
+### .NET
+
+The repo now includes a .NET schema package scaffold at [packages/dotnet/Gabp.Schemas](packages/dotnet/Gabp.Schemas/README.md).
+
+It embeds the canonical `SCHEMA/1.0` tree and exposes a small access API for reading versioned schema assets from .NET consumers. The intended NuGet package ID is `Gabp.Schemas`.
+
+### Go
+
+The repo now includes a Go schema package scaffold at [packages/go/schemas](packages/go/schemas/README.md).
+
+It carries an embedded copy of the versioned schema tree for Go consumers and includes a sync script to refresh that embedded copy from the canonical `SCHEMA/1.0` source.
 
 ## Contributing
 

@@ -4,7 +4,7 @@
   "type": "request",
   "method": "tools/call",
   "params": {
-    "name": "test.tool",
+    "name": "test/tool",
     "arguments": {
       "param1": "value1",
       "param2": 42

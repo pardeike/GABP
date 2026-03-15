@@ -1,0 +1,30 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/state.get.request.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "GABP state/get Request",
+  "description": "Request to get current game state or specific state components",
+  "type": "object",
+  "required": ["v", "id", "type", "method"],
+  "properties": {
+    "v": { "const": "gabp/1" },
+    "id": { "type": "string", "format": "uuid" },
+    "type": { "const": "request" },
+    "method": { "const": "state/get" },
+    "params": {
+      "type": "object",
+      "properties": {
+        "components": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Array of state component names to retrieve"
+        },
+        "playerId": {
+          "type": "string",
+          "description": "Player ID for player-specific state"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

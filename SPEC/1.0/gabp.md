@@ -89,7 +89,7 @@ Example success:
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "type": "response",
   "result": {
-    "tools": ["inventory/get", "world/place_block"]
+    "status": "ok"
   }
 }
 ```
@@ -174,7 +174,7 @@ Lists available tools/methods provided by the mod.
 
 #### tools/call
 
-Invokes a specific tool with parameters.
+Invokes a specific tool with arguments.
 
 **Request Parameters**:
 - `name` (string, required): Tool name to invoke
@@ -391,11 +391,11 @@ Create a GABP bridge client that:
    }
 
 3. CAPABILITIES: Parse session/welcome response to discover available tools/events:
-   result.capabilities.tools = ["inventory/get", "world/place_block"]
+   result.capabilities.methods = ["tools/list", "tools/call"]
    result.capabilities.events = ["player/move", "world/block_change"]
 
 4. OPERATIONS: 
-   - Call tools: tools/call method with tool name and parameters
+   - Call tools: tools/call method with tool name and arguments
    - Subscribe to events: events/subscribe with channel names
    - Handle async events with proper sequencing
 
@@ -439,9 +439,9 @@ Create a GABP mod server that:
        "agentId": "my-game-mod-v1.0",
        "app": {"name": "MyGame", "version": "1.2.0"},
        "capabilities": {
-         "tools": ["inventory/get", "world/place_block"],
+         "methods": ["tools/list", "tools/call", "events/subscribe"],
          "events": ["player/move", "world/block_change"], 
-         "resources": ["world/schematic"]
+         "resources": ["gabp://game/world/schematic"]
        },
        "schemaVersion": "1.0"
      }
@@ -475,7 +475,7 @@ Game integration points:
 - [ ] **Event Broadcasting**: Hook game events and broadcast to subscribed channels
 - [ ] **Resource Exposure**: Provide URI-based access to game data
 - [ ] **State Management**: Track per-connection subscriptions and session state
-- [ ] **Schema Validation**: Validate tool parameters and resource requests
+- [ ] **Schema Validation**: Validate tool arguments and resource requests
 
 ### 12.4 Common Implementation Patterns
 

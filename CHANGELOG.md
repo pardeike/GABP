@@ -4,31 +4,23 @@ All notable changes to the GABP specification and schemas will be documented in 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## Unreleased
+
+## 1.0.1 - 2026-03-15
 
 ### Added
-- Initial GABP 1.0 specification
-- Core message envelope schema
-- Session management methods (hello/welcome)
-- Tool discovery and invocation methods
-- Event subscription system
-- Resource access methods
-- Transport layer specification (stdio, TCP, named pipes)
-- Security model with token-based authentication
-- Method registry and error code definitions
-- Comprehensive JSON Schema validation
-- Example messages for all core methods
-- Conformance test suite
-- CI/CD validation workflow
-- Contributing guidelines and Code of Conduct
+- Added the `wire-model-decisions.md` note to pin the canonical 1.0 field and naming choices.
+- Added explicit `tools/call` request and response examples plus valid and invalid conformance cases for tool naming and tool descriptors.
+- Added a new `.NET` schema package scaffold for `Gabp.Schemas`.
+- Added a new `Go` schema package scaffold with embedded schema assets and a sync script.
+- Added GitHub Actions automation to verify and publish the NuGet package.
 
-### Security
-- Token-based authentication system
-- Loopback-only network connections
-- File permission restrictions for configuration
-- Security threat model analysis
+### Changed
+- Aligned the 1.0 schemas, examples, and conformance assets around `arguments`, `capabilities.methods`, and slash-style native tool names.
+- Updated the bundled JS schema package assets and package metadata to match the canonical schema tree.
+- Removed avoidable `Pardeike` branding from package and documentation surfaces inside `GABP`.
 
-## [1.0.0] - TBD
+## 1.0.0 - 2026-03-15
 
 ### Added
 - First stable release of GABP specification
@@ -36,6 +28,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Complete JSON Schema definitions
 - Reference implementations (planned)
 - Documentation and examples
-
-[Unreleased]: https://github.com/pardeike/GABP/compare/HEAD...HEAD
-[1.0.0]: https://github.com/pardeike/GABP/releases/tag/v1.0.0

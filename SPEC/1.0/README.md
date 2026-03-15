@@ -8,6 +8,7 @@ This directory contains the normative specification documents for GABP (Game Age
 - **[transport.md](transport.md)** - Transport layer details (framing, connections, loopback)  
 - **[security.md](security.md)** - Security model and threat analysis
 - **[registry.md](registry.md)** - Method names, error codes, and URI schemes
+- **[wire-model-decisions.md](wire-model-decisions.md)** - Canonical 1.0 wire-model decisions
 - **[ai-implementation.md](ai-implementation.md)** - AI implementer guide with prompts and patterns
 
 ## Reading Order
@@ -18,7 +19,8 @@ For implementers, we recommend reading the documents in this order:
 2. **transport.md** - Learn how messages are sent over the wire  
 3. **security.md** - Understand the security model and authentication
 4. **registry.md** - Reference for method names, error codes, and extensibility rules
-5. **ai-implementation.md** - AI-specific implementation guidance (for AI-assisted development)
+5. **wire-model-decisions.md** - Canonical naming and field decisions for 1.0
+6. **ai-implementation.md** - AI-specific implementation guidance (for AI-assisted development)
 
 ## Implementation Requirements
 

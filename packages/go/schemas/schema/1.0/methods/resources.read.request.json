@@ -1,0 +1,40 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/resources.read.request.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "resources/read Request",
+  "description": "Request schema for reading a specific resource",
+  "type": "object",
+  "required": ["v", "id", "type", "method", "params"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique request identifier"
+    },
+    "type": {
+      "const": "request",
+      "description": "Message type"
+    },
+    "method": {
+      "const": "resources/read",
+      "description": "Method name"
+    },
+    "params": {
+      "type": "object",
+      "required": ["uri"],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "uri",
+          "description": "Resource URI to read"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

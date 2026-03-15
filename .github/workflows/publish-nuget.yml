@@ -1,0 +1,74 @@
+name: Publish Gabp.Schemas
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag to publish, for example v1.0.0
+        required: false
+        type: string
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-package:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6.0.2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5.0.0
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Pack .NET schema package
+      run: |
+        dotnet pack packages/dotnet/Gabp.Schemas/Gabp.Schemas.csproj \
+          --configuration Release \
+          --output artifacts/dotnet
+
+  publish-to-nuget:
+    needs: verify-package
+    if: |
+      (github.event_name == 'release' && github.event.release.prerelease == false) ||
+      (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6.0.2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5.0.0
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Verify release tag matches package version
+      env:
+        RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+      run: |
+        PACKAGE_VERSION="$(dotnet msbuild packages/dotnet/Gabp.Schemas/Gabp.Schemas.csproj -nologo -getProperty:Version)"
+        if [ "$RELEASE_TAG" != "v$PACKAGE_VERSION" ]; then
+          echo "Release tag $RELEASE_TAG does not match package version v$PACKAGE_VERSION" >&2
+          exit 1
+        fi
+
+    - name: Pack .NET schema package
+      run: |
+        dotnet pack packages/dotnet/Gabp.Schemas/Gabp.Schemas.csproj \
+          --configuration Release \
+          --output artifacts/dotnet
+
+    - name: Publish package to NuGet
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        dotnet nuget push "artifacts/dotnet/*.nupkg" \
+          --api-key "$NUGET_API_KEY" \
+          --source "https://api.nuget.org/v3/index.json" \
+          --skip-duplicate

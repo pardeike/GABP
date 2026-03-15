@@ -8,8 +8,8 @@
   "properties": {
     "name": {
       "type": "string",
-      "pattern": "^[a-z0-9_.-]+$",
-      "description": "Unique tool identifier"
+      "pattern": "^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$",
+      "description": "Unique native GABP tool identifier"
     },
     "title": {
       "type": "string",
@@ -23,7 +23,7 @@
     },
     "inputSchema": {
       "type": "object",
-      "description": "JSON Schema for tool input parameters"
+      "description": "JSON Schema for tool input arguments"
     },
     "outputSchema": {
       "type": "object",

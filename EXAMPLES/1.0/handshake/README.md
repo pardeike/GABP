@@ -25,7 +25,7 @@ The handshake is always initiated by the bridge and follows this pattern:
 ### In session/welcome (Mod → Bridge):
 - **agentId** - Unique identifier for this mod instance
 - **app** - Game information (name and version)
-- **capabilities** - Available tools, events, and resources
+- **capabilities** - Available methods, events, and resources
 - **schemaVersion** - GABP schema version supported
 
 ## What Happens Next

@@ -51,11 +51,11 @@ IMPLEMENTATION STEPS:
    Expect: {"v":"gabp/1","id":"<same>","type":"response","result":{"agentId":"...","capabilities":{...}}}
 
 3. CAPABILITIES:
-   Parse capabilities.tools, capabilities.events, capabilities.resources from welcome response
+   Parse capabilities.methods, capabilities.events, capabilities.resources from welcome response
 
 4. OPERATIONS:
    - List tools: {"method":"tools/list","params":{}}
-   - Call tool: {"method":"tools/call","params":{"name":"inventory/get","parameters":{...}}}
+   - Call tool: {"method":"tools/call","params":{"name":"inventory/get","arguments":{...}}}
    - Subscribe events: {"method":"events/subscribe","params":{"channels":["player/move"]}}
    - Handle events: {"type":"event","channel":"player/move","seq":0,"payload":{...}}
 
@@ -98,11 +98,11 @@ IMPLEMENTATION STEPS:
 
 2. SESSION HANDLING:
    Receive: {"method":"session/hello","params":{"token":"...","bridgeVersion":"...","platform":"...","launchId":"..."}}
-   Send: {"type":"response","result":{"agentId":"my-game-mod-v1.0","app":{"name":"MyGame","version":"1.2.0"},"capabilities":{"tools":[...],"events":[...],"resources":[...]},"schemaVersion":"1.0"}}
+   Send: {"type":"response","result":{"agentId":"my-game-mod-v1.0","app":{"name":"MyGame","version":"1.2.0"},"capabilities":{"methods":[...],"events":[...],"resources":[...]},"schemaVersion":"1.0"}}
 
 3. TOOL SYSTEM:
    - Implement tools/list: Return available tools with input/output schemas
-   - Implement tools/call: Execute named tool with parameters, return result
+   - Implement tools/call: Execute named tool with arguments, return result
    - Map tools to actual game functions (inventory access, world modification, etc.)
 
 4. EVENT SYSTEM: 
@@ -125,7 +125,7 @@ GAME INTEGRATION POINTS:
 
 ERROR HANDLING:
 - Use JSON-RPC error codes
-- Validate tool parameters against schemas
+- Validate tool arguments against schemas
 - Handle game state errors gracefully
 
 CODE STRUCTURE:

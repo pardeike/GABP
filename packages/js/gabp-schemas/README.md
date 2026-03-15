@@ -251,7 +251,7 @@ const toolCallRequest = {
   "type": "request", 
   "method": "tools/call",
   "params": {
-    "name": "inventory.get",
+    "name": "inventory/get",
     "arguments": {
       "playerId": "steve"
     }
@@ -295,6 +295,5 @@ Apache-2.0 - see [LICENSE](./LICENSE) for details.
 
 ## Links
 
-- [GABP Specification](https://github.com/pardeike/GABP/blob/main/README.md)
-- [GitHub Repository](https://github.com/pardeike/GABP)
-- [Issue Tracker](https://github.com/pardeike/GABP/issues)
+- [GABP Specification](../../../README.md)
+- [Repository Root](../../..)

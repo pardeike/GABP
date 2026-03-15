@@ -12,12 +12,12 @@ This document defines the method registry, error code assignments, and URI schem
 
 ### 1.1 Naming Convention
 
-Method names MUST follow the pattern `^[a-z]+(/[a-z]+)+$`:
+Method names MUST follow the pattern `^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$`:
 
-- Use lowercase letters only
+- Start each segment with a lowercase letter
 - Separate segments with forward slashes (`/`)
 - Minimum two segments required
-- No underscores, dashes, or other special characters
+- Digits, underscores, and dashes are allowed after the first character in a segment
 - No leading or trailing slashes
 
 **Valid Examples**:
@@ -25,13 +25,16 @@ Method names MUST follow the pattern `^[a-z]+(/[a-z]+)+$`:
 - `tools/list`
 - `world/block/get`
 - `player/inventory/add`
+- `minecraft/world/get_blocks`
+- `game-v2/world/set_chunk`
 
 **Invalid Examples**:
 - `sessionHello` (missing slash)
 - `tools` (single segment)
 - `tools/list/` (trailing slash)
-- `tools_list` (underscore not allowed)
+- `tools_list` (single segment)
 - `Tools/List` (uppercase not allowed)
+- `world//get` (empty segment)
 
 ### 1.2 Reserved Method Namespaces
 
@@ -85,6 +88,26 @@ Implementations MAY define custom methods using implementation-specific namespac
 - Avoid conflicts with reserved namespaces
 - Document custom methods in implementation guides
 - Consider standardization for widely-used methods
+
+### 1.4 Tool Names
+
+Tool names are not protocol methods, but they use the same native slash-separated
+namespace style on the wire.
+
+Tool names MUST follow the pattern `^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$`.
+
+**Valid Examples**:
+- `inventory/get`
+- `world/place_block`
+- `player/teleport`
+
+**Invalid Examples**:
+- `inventory.get` (dot-separated names are not canonical native GABP tool identifiers)
+- `inventory` (single segment)
+- `Inventory/get` (uppercase not allowed)
+
+Bridges MAY adapt native tool names for other ecosystems, but those adapted
+names are not the canonical GABP wire representation.
 
 ## 2. Error Codes
 

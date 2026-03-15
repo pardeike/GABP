@@ -6,6 +6,8 @@ This directory contains examples of GABP tool discovery and invocation. Tools ar
 
 - **[010_tools-list.req.json](010_tools-list.req.json)** - Request to list all available tools
 - **[011_tools-list.res.json](011_tools-list.res.json)** - Response with tool definitions
+- **[012_tools-call.req.json](012_tools-call.req.json)** - Request to invoke a tool with arguments
+- **[013_tools-call.res.json](013_tools-call.res.json)** - Response with the tool result
 
 ## Tool Discovery Flow
 
@@ -20,7 +22,7 @@ Each tool in the response includes:
 - **name** - Unique identifier for the tool (e.g., "inventory/get_items")
 - **title** - Human-readable name
 - **description** - What the tool does
-- **inputSchema** - JSON schema for tool parameters
+- **inputSchema** - JSON schema for tool arguments
 - **outputSchema** - JSON schema for tool results
 - **tags** - Optional categorization tags
 
@@ -57,3 +59,5 @@ These examples validate against:
 - `../../../SCHEMA/1.0/envelope.schema.json`
 - `../../../SCHEMA/1.0/methods/tools.list.request.json`
 - `../../../SCHEMA/1.0/methods/tools.list.response.json`
+- `../../../SCHEMA/1.0/methods/tools.call.request.json`
+- `../../../SCHEMA/1.0/methods/tools.call.response.json`

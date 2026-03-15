@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: GABP Events
-  version: 1.0.0
+  version: 1.0.1
   description: |
     AsyncAPI specification for GABP (Game Agent Bridge Protocol) events.
     
@@ -9,7 +9,6 @@ info:
     real-time communication between game mods and automation bridges.
   contact:
     name: GABP Maintainers
-    url: https://github.com/pardeike/GABP
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html

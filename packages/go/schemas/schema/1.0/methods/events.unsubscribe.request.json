@@ -1,0 +1,45 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/events.unsubscribe.request.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "events/unsubscribe Request",
+  "description": "Request schema for unsubscribing from event channels",
+  "type": "object",
+  "required": ["v", "id", "type", "method", "params"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique request identifier"
+    },
+    "type": {
+      "const": "request",
+      "description": "Message type"
+    },
+    "method": {
+      "const": "events/unsubscribe",
+      "description": "Method name"
+    },
+    "params": {
+      "type": "object",
+      "required": ["channels"],
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Array of channel names to unsubscribe from"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

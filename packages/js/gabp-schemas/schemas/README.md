@@ -11,7 +11,7 @@ This directory contains machine-readable JSON Schema definitions for GABP (Game 
 
 ## Schema Standard
 
-All schemas use JSON Schema Draft 2020-12 and include:
+All current 1.0 schemas use JSON Schema Draft-07 and include:
 - **$id** - Canonical URL for the schema
 - **$schema** - JSON Schema dialect version
 - **title** - Human-readable name

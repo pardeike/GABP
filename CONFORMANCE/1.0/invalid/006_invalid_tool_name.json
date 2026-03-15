@@ -1,0 +1,10 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440013",
+  "type": "request",
+  "method": "tools/call",
+  "params": {
+    "name": "inventory.get",
+    "arguments": {}
+  }
+}
