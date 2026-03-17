@@ -36,6 +36,7 @@ jobs:
       uses: actions/setup-go@v6.3.0
       with:
         go-version-file: packages/go/schemas/go.mod
+        cache-dependency-path: packages/go/schemas/go.mod
 
     - name: Validate release inputs
       env:
