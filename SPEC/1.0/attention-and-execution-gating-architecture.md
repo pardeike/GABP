@@ -336,6 +336,8 @@ The ideal experience is:
 - the integration layer or Lib.GAB runtime decides what events and logs should open attention
 - only advanced integrations supply a custom attention classifier or summary policy
 
+The one thing intentionally deferred is a public cross-mod API for third-party tools or mods to publish first-class attention items directly. The current rollout keeps attention ownership centralized in the integration layer until that extension surface is designed more deliberately.
+
 ## 12. Implementation Guidance By Layer
 
 ### 12.1 Lib.GAB
