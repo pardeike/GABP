@@ -1,0 +1,17 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440074",
+  "type": "event",
+  "channel": "attention/opened",
+  "seq": 2,
+  "payload": {
+    "attentionId": "attn_10",
+    "state": "open",
+    "severity": "error",
+    "stateInvalidated": true,
+    "summary": "This payload is invalid because the blocking field is missing.",
+    "openedAtSequence": 300,
+    "latestSequence": 301,
+    "totalUrgentEntries": 1
+  }
+}

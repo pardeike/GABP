@@ -53,6 +53,13 @@ IMPLEMENTATION STEPS:
 3. CAPABILITIES:
    Parse capabilities.methods, capabilities.events, capabilities.resources from welcome response
 
+   If the mod advertises:
+   - `attention/current`
+   - `attention/ack`
+   - one or more `attention/*` event channels
+
+   then the bridge should treat attention as a first-class part of control flow.
+
 4. OPERATIONS:
    - List tools: {"method":"tools/list","params":{}}
    - Call tool: {"method":"tools/call","params":{"name":"inventory/get","arguments":{...}}}
@@ -62,6 +69,17 @@ IMPLEMENTATION STEPS:
 5. ERROR HANDLING:
    - Check response.error field 
    - Handle JSON-RPC error codes: -32601 (method not found), -32602 (invalid params), etc.
+
+6. ATTENTION-AWARE FLOW:
+   - Query `attention/current` when the implementation exposes it and execution
+     ordering may depend on current game-side conditions
+   - Subscribe to `attention/opened`, `attention/updated`, and
+     `attention/cleared` when advertised
+   - Treat asynchronous attention events as informative, but rely on explicit
+     bridge-side execution gating or an explicit `attention/current` check at
+     decision points
+   - Acknowledge blocking items with `attention/ack` before retrying blocked
+     game-bound actions
 
 VALIDATION:
 - All messages must have v="gabp/1", valid UUID id, correct type
@@ -111,7 +129,16 @@ IMPLEMENTATION STEPS:
    - Emit events: {"type":"event","channel":"player/move","seq":N,"payload":{...}}
    - Maintain sequence numbers per channel
 
-5. RESOURCE SYSTEM:
+5. OPTIONAL ATTENTION SYSTEM:
+   - Implement `attention/current` to expose the currently open summarized
+     attention item or `null`
+   - Implement `attention/ack` to acknowledge a specific `attentionId`
+   - Emit `attention/opened`, `attention/updated`, and `attention/cleared`
+     events when supported
+   - Summarize important asynchronous game-side state instead of streaming raw
+     logs as the primary control signal
+
+6. RESOURCE SYSTEM:
    - Implement resources/list: Expose game data as URI-addressable resources
    - Implement resources/read: Return resource content by URI
    - Support game state queries: gabp://game/world, gabp://game/players, etc.
@@ -152,6 +179,7 @@ TEST SCENARIOS:
 5. Error handling for invalid messages
 6. Concurrent request handling
 7. Connection drop/reconnect behavior
+8. Attention observation, acknowledgement, and recovery flow
 
 TEST STRUCTURE:
 - Use examples from CONFORMANCE/1.0/valid/ as test cases
@@ -168,6 +196,8 @@ VALIDATION CHECKLIST:
 □ Event sequence numbers increment correctly per channel
 □ Tools execute and return expected results
 □ Resources are accessible via URI patterns
+□ Attention items, when supported, expose stable `attentionId` values
+□ Attention acknowledgement produces predictable recovery behavior
 ```
 
 ## Implementation Patterns

@@ -1,0 +1,51 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/attention.ack.response.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "attention/ack Response",
+  "description": "Response schema for acknowledging a specific attention item",
+  "type": "object",
+  "required": ["v", "id", "type", "result"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Request identifier this response corresponds to"
+    },
+    "type": {
+      "const": "response",
+      "description": "Message type"
+    },
+    "result": {
+      "type": "object",
+      "required": ["acknowledged", "attentionId", "currentAttention"],
+      "properties": {
+        "acknowledged": {
+          "type": "boolean",
+          "description": "Whether the requested attention item was accepted as acknowledged"
+        },
+        "attentionId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Attention identifier that was requested"
+        },
+        "currentAttention": {
+          "description": "Current open attention item after the ack attempt, or null when none remains open",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "../common/attention.schema.json"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

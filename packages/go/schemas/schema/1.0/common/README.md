@@ -7,6 +7,7 @@ This directory contains shared JSON Schema definitions used across multiple GABP
 - **[error.schema.json](error.schema.json)** - Error object structure for response messages
 - **[tool.schema.json](tool.schema.json)** - Tool definition structure for tools/list responses
 - **[capabilities.schema.json](capabilities.schema.json)** - Capability declaration for session/welcome
+- **[attention.schema.json](attention.schema.json)** - Summarized attention item structure for attention methods and lifecycle events
 
 ## Error Schema
 
@@ -61,6 +62,26 @@ Key properties:
 - **methods** - Array of available protocol method names
 - **events** - Array of available event channel names
 - **resources** - Array of available resource URI patterns
+
+## Attention Schema
+
+Defines the shared structure for summarized attention items used by:
+
+- `attention/current`
+- `attention/ack`
+- `attention/opened`
+- `attention/updated`
+- `attention/cleared`
+
+Key properties:
+
+- **attentionId** - Stable identifier for the attention item
+- **state** - Whether the item is still open or has been cleared
+- **severity** - High-level severity such as `warning` or `error`
+- **blocking** - Whether bridge-side execution should be gated
+- **stateInvalidated** - Whether the prior game-state assumptions should be treated as stale
+- **summary** - Compact semantic description of what needs attention
+- **sample** - Optional representative sample entries for deeper context
 
 ## Usage in Other Schemas
 

@@ -8,6 +8,7 @@ This directory contains working examples of GABP (Game Agent Bridge Protocol) me
 - **[tools/](tools/)** - Tool discovery and invocation examples
 - **[events/](events/)** - Event subscription and notification examples  
 - **[state/](state/)** - State management examples for getting and setting game state
+- **[attention/](attention/)** - Optional attention inspection, lifecycle, and acknowledgement examples
 
 ## Using These Examples
 

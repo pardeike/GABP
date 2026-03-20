@@ -1,0 +1,40 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/attention.ack.request.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "attention/ack Request",
+  "description": "Request schema for acknowledging a specific attention item",
+  "type": "object",
+  "required": ["v", "id", "type", "method", "params"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique request identifier"
+    },
+    "type": {
+      "const": "request",
+      "description": "Message type"
+    },
+    "method": {
+      "const": "attention/ack",
+      "description": "Method name"
+    },
+    "params": {
+      "type": "object",
+      "required": ["attentionId"],
+      "properties": {
+        "attentionId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable attention identifier to acknowledge"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

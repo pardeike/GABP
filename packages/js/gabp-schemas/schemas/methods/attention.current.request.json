@@ -1,0 +1,33 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/methods/attention.current.request.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "attention/current Request",
+  "description": "Request schema for retrieving the current open attention item",
+  "type": "object",
+  "required": ["v", "id", "type", "method"],
+  "properties": {
+    "v": {
+      "const": "gabp/1",
+      "description": "Protocol version identifier"
+    },
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique request identifier"
+    },
+    "type": {
+      "const": "request",
+      "description": "Message type"
+    },
+    "method": {
+      "const": "attention/current",
+      "description": "Method name"
+    },
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "default": {}
+    }
+  },
+  "additionalProperties": false
+}

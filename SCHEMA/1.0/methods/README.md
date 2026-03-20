@@ -18,6 +18,12 @@ This directory contains JSON Schema definitions for all standard GABP method cal
 - **[events.subscribe.request.json](events.subscribe.request.json)** - Subscribe to event channels
 - **[events.unsubscribe.request.json](events.unsubscribe.request.json)** - Unsubscribe from channels
 
+### Attention Management
+- **[attention.current.request.json](attention.current.request.json)** - Query the current open attention item
+- **[attention.current.response.json](attention.current.response.json)** - Current attention item or `null`
+- **[attention.ack.request.json](attention.ack.request.json)** - Explicitly acknowledge a specific attention item
+- **[attention.ack.response.json](attention.ack.response.json)** - Ack result plus the remaining current attention state
+
 ### Resource Access
 - **[resources.list.request.json](resources.list.request.json)** - List available resources
 - **[resources.list.response.json](resources.list.response.json)** - Resource directory listing

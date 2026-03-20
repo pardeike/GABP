@@ -1,0 +1,18 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440071",
+  "type": "event",
+  "channel": "attention/opened",
+  "seq": 1,
+  "payload": {
+    "attentionId": "attn_8",
+    "state": "open",
+    "severity": "error",
+    "blocking": true,
+    "stateInvalidated": true,
+    "summary": "A blocking attention item is open.",
+    "openedAtSequence": 100,
+    "latestSequence": 101,
+    "totalUrgentEntries": 3
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440070",
+  "type": "response",
+  "result": {
+    "attention": {
+      "attentionId": "attn_7",
+      "state": "open",
+      "severity": "warning",
+      "blocking": false,
+      "stateInvalidated": false,
+      "summary": "A non-blocking advisory attention item is currently open.",
+      "openedAtSequence": 10,
+      "latestSequence": 12,
+      "totalUrgentEntries": 2
+    }
+  }
+}

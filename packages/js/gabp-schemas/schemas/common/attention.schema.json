@@ -1,0 +1,110 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/common/attention.schema.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "GABP Attention Object",
+  "description": "Schema for summarized attention items that can influence execution ordering",
+  "type": "object",
+  "required": [
+    "attentionId",
+    "state",
+    "severity",
+    "blocking",
+    "stateInvalidated",
+    "summary",
+    "openedAtSequence",
+    "latestSequence",
+    "totalUrgentEntries"
+  ],
+  "properties": {
+    "attentionId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for this attention item"
+    },
+    "state": {
+      "type": "string",
+      "enum": ["open", "cleared"],
+      "description": "Lifecycle state of the attention item"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["info", "warning", "error", "fatal"],
+      "description": "Highest summarized severity for this attention item"
+    },
+    "blocking": {
+      "type": "boolean",
+      "description": "Whether bridge-side execution should be gated while this item is open"
+    },
+    "stateInvalidated": {
+      "type": "boolean",
+      "description": "Whether prior game-state assumptions should be treated as stale"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Compact semantic summary of what requires attention"
+    },
+    "causalOperationId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional operation identifier associated with this attention item"
+    },
+    "causalMethod": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional method, tool, or capability identifier associated with this attention item"
+    },
+    "openedAtSequence": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "First diagnostics-plane sequence associated with this attention item"
+    },
+    "latestSequence": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Latest diagnostics-plane sequence associated with this attention item"
+    },
+    "diagnosticsCursor": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional cursor the bridge can use to inspect more detailed diagnostics"
+    },
+    "totalUrgentEntries": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of summarized urgent entries represented by this item"
+    },
+    "sample": {
+      "type": "array",
+      "description": "Optional representative sample of summarized urgent entries",
+      "items": {
+        "type": "object",
+        "required": ["level", "message", "repeatCount", "latestSequence"],
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": ["info", "warning", "error", "fatal"],
+            "description": "Severity level for the sampled entry"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Representative message text"
+          },
+          "repeatCount": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Number of similar entries summarized by this sample"
+          },
+          "latestSequence": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Latest diagnostics-plane sequence represented by this sample"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

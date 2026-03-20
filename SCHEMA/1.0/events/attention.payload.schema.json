@@ -1,0 +1,7 @@
+{
+  "$id": "https://gabp.dev/schema/1.0/events/attention.payload.schema.json",
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "GABP Attention Event Payload",
+  "description": "Payload schema for attention/opened, attention/updated, and attention/cleared event channels",
+  "$ref": "../common/attention.schema.json"
+}

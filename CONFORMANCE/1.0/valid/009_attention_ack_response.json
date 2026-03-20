@@ -1,0 +1,20 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440072",
+  "type": "response",
+  "result": {
+    "acknowledged": false,
+    "attentionId": "attn_missing",
+    "currentAttention": {
+      "attentionId": "attn_9",
+      "state": "open",
+      "severity": "error",
+      "blocking": true,
+      "stateInvalidated": true,
+      "summary": "A different blocking attention item remains open.",
+      "openedAtSequence": 200,
+      "latestSequence": 205,
+      "totalUrgentEntries": 5
+    }
+  }
+}

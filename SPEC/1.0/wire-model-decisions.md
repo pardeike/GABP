@@ -84,6 +84,30 @@ method.
 Both use slash-separated namespace-style identifiers, but they occupy different
 domains.
 
+### 5. Attention uses explicit methods, lifecycle channels, and stable ids
+
+The canonical additive attention surface within `gabp/1` uses:
+
+- protocol methods:
+  - `attention/current`
+  - `attention/ack`
+- lifecycle event channels:
+  - `attention/opened`
+  - `attention/updated`
+  - `attention/cleared`
+
+Attention payloads use a stable `attentionId` so the same item can be referenced
+consistently across:
+
+- lifecycle events
+- attention inspection methods
+- implementation-defined blocked-call or related-result flows
+
+Bridges and integrations SHOULD preserve the distinction between:
+
+- a call blocked before dispatch because attention was already open
+- a call that executed and then produced or referenced related attention
+
 ## Adapter Guidance
 
 Bridges may adapt native tool identifiers for other environments.

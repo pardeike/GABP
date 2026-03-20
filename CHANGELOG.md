@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 - Added an architecture note for additive attention and execution gating support within `gabp/1`, including rationale, compatibility decisions, and an ordered build-and-test plan across GABP, Lib.GAB, GABS, and game integrations.
+- Added canonical additive attention protocol surface documentation for `attention/current`, `attention/ack`, and the `attention/opened`, `attention/updated`, and `attention/cleared` lifecycle channels.
+- Added reusable attention schemas, attention examples, and valid/invalid conformance fixtures.
+
+### Changed
+- Updated the canonical JS and Go schema package mirrors to include the new attention assets.
+- Extended the AsyncAPI event documentation and AI implementer guide to cover optional attention-aware flows.
 
 ## 1.0.3 - 2026-03-15
 

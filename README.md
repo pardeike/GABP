@@ -51,6 +51,7 @@ Working examples of GABP messages are in [`EXAMPLES/1.0/`](EXAMPLES/1.0/):
 - **[Handshake](EXAMPLES/1.0/handshake/)** - How to start a session
 - **[Tools](EXAMPLES/1.0/tools/)** - How to find and use tools
 - **[Events](EXAMPLES/1.0/events/)** - How to subscribe to and receive events
+- **[Attention](EXAMPLES/1.0/attention/)** - Optional attention inspection, lifecycle, and acknowledgement flow
 
 ## Validation
 
@@ -73,6 +74,18 @@ The [`CONFORMANCE/1.0/`](CONFORMANCE/1.0/) directory contains:
 2. **Handshake**: Send `session/hello` and receive `session/welcome` messages
 3. **Discover**: Use `tools/list` to see what the game can do
 4. **Interact**: Call methods, subscribe to events, and read resources
+
+Optional additive support within `gabp/1` lets implementations expose
+important summarized game-side state through:
+
+- `attention/current`
+- `attention/ack`
+- `attention/opened`
+- `attention/updated`
+- `attention/cleared`
+
+Bridges MUST discover that support through `capabilities.methods` and
+`capabilities.events` instead of assuming it is always present.
 
 Basic handshake example:
 

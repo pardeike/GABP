@@ -62,7 +62,8 @@ Each method has dedicated request/response schemas that inherit from the envelop
 Event messages have their own structure with channels, sequence numbers, and payloads.
 
 ### Common Schemas
-Shared definitions like error objects, tool definitions, and capability structures.
+Shared definitions like error objects, tool definitions, capability structures,
+and reusable attention objects.
 
 ## Validation in CI
 

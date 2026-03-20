@@ -5,6 +5,7 @@ This directory contains JSON Schema definitions for GABP event messages. Events 
 ## Schema Files
 
 - **[event.message.json](event.message.json)** - Base structure for all event messages
+- **[attention.payload.schema.json](attention.payload.schema.json)** - Shared payload schema for `attention/opened`, `attention/updated`, and `attention/cleared`
 
 ## Event Message Structure
 
@@ -39,6 +40,12 @@ The channel identifies what kind of event occurred:
 - Uses slash-separated naming like `category/subcategory`
 - Examples: `player/move`, `world/block_change`, `inventory/update`
 - Follows the same naming conventions as methods
+
+The additive attention channels reserved within `gabp/1` are:
+
+- `attention/opened`
+- `attention/updated`
+- `attention/cleared`
 
 ### Sequence Number  
 The seq field helps with:

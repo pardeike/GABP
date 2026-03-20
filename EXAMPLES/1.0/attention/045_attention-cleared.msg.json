@@ -1,0 +1,21 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440045",
+  "type": "event",
+  "channel": "attention/cleared",
+  "seq": 8,
+  "payload": {
+    "attentionId": "attn_42",
+    "state": "cleared",
+    "severity": "error",
+    "blocking": false,
+    "stateInvalidated": true,
+    "summary": "Selection-related attention item was cleared after acknowledgement.",
+    "causalOperationId": "op_abc123",
+    "causalMethod": "rimworld/select_pawn",
+    "openedAtSequence": 1201,
+    "latestSequence": 1237,
+    "diagnosticsCursor": 1237,
+    "totalUrgentEntries": 37
+  }
+}

@@ -258,6 +258,59 @@ Sets or modifies game state (if supported by the game).
 
 **Response Result**:
 - `applied` (object, required): Successfully applied updates
+
+### 4.6 Attention Management
+
+Attention support is OPTIONAL and MUST be discovered through `capabilities.methods`
+and `capabilities.events`.
+
+The attention surface is intended for important summarized game-side information
+that can invalidate an agent's assumptions or should otherwise affect execution
+ordering.
+
+#### attention/current
+
+Returns the current open attention item, if any.
+
+**Request Parameters**: None
+
+**Response Result**:
+- `attention` (object or `null`, required): The current attention item, or `null`
+  when no attention item is open
+
+#### attention/ack
+
+Acknowledges a specific attention item explicitly.
+
+**Request Parameters**:
+- `attentionId` (string, required): Stable attention identifier returned by
+  `attention/current`, a lifecycle event, or another implementation-defined
+  response that references the item
+
+**Response Result**:
+- `acknowledged` (boolean, required): Whether the requested attention item was
+  accepted as acknowledged
+- `attentionId` (string, required): The attention id that was requested
+- `currentAttention` (object or `null`, required): The currently open attention
+  item after the ack attempt, or `null` when none remains open
+
+### 4.7 Attention Event Channels
+
+Implementations that support attention SHOULD expose lifecycle channels through
+`capabilities.events`.
+
+Recommended canonical channels:
+
+- `attention/opened`
+- `attention/updated`
+- `attention/cleared`
+
+These event channels all carry the same summarized attention object payload.
+
+The bridge SHOULD treat asynchronous attention events as informative and
+low-latency, but SHOULD rely on its own execution gate or other implementation
+policy at the next game-bound decision point instead of assuming the host will
+immediately inject the event into active reasoning.
 - `errors` (array, optional): Array of validation or application errors
 
 ## 5. Method Names

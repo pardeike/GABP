@@ -1,0 +1,29 @@
+{
+  "v": "gabp/1",
+  "id": "550e8400-e29b-41d4-a716-446655440042",
+  "type": "event",
+  "channel": "attention/opened",
+  "seq": 7,
+  "payload": {
+    "attentionId": "attn_42",
+    "state": "open",
+    "severity": "error",
+    "blocking": true,
+    "stateInvalidated": true,
+    "summary": "Selection action failed and prior game-state assumptions may no longer be valid.",
+    "causalOperationId": "op_abc123",
+    "causalMethod": "rimworld/select_pawn",
+    "openedAtSequence": 1201,
+    "latestSequence": 1237,
+    "diagnosticsCursor": 1237,
+    "totalUrgentEntries": 37,
+    "sample": [
+      {
+        "level": "error",
+        "message": "NullReferenceException in selection flow",
+        "repeatCount": 11,
+        "latestSequence": 1231
+      }
+    ]
+  }
+}

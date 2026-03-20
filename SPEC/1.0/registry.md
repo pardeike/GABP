@@ -74,6 +74,13 @@ Resource discovery and access.
 - `resources/write` - Write resource content (if supported)
 - `resources/watch` - Subscribe to resource changes
 
+#### attention/*
+Attention inspection and acknowledgement for important summarized game-side state.
+
+**Reserved Methods**:
+- `attention/current` - Get the current open attention item, if any
+- `attention/ack` - Explicitly acknowledge a specific attention item
+
 ### 1.3 Extension Methods
 
 Implementations MAY define custom methods using implementation-specific namespaces:
@@ -89,7 +96,25 @@ Implementations MAY define custom methods using implementation-specific namespac
 - Document custom methods in implementation guides
 - Consider standardization for widely-used methods
 
-### 1.4 Tool Names
+### 1.4 Event Channel Names
+
+Event channels SHOULD follow the same slash-separated lowercase native naming
+style used by methods and tool names:
+
+```text
+^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$
+```
+
+#### Reserved Event Channels
+
+The following core channels are reserved for additive attention support within
+`gabp/1`:
+
+- `attention/opened`
+- `attention/updated`
+- `attention/cleared`
+
+### 1.5 Tool Names
 
 Tool names are not protocol methods, but they use the same native slash-separated
 namespace style on the wire.
@@ -290,6 +315,9 @@ Mods MUST declare their capabilities in the `session/welcome` response:
 - `events` (array): List of available event channels  
 - `resources` (array): List of accessible resource URIs
 - `extensions` (object): Extension-specific capabilities
+
+Attention support, when implemented, MUST be discoverable through
+`capabilities.methods` and `capabilities.events` rather than by assumption.
 
 ### 4.3 Dynamic Capabilities
 
