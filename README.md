@@ -32,6 +32,7 @@ GABP defines these key parts:
 - **[Security Guide](SPEC/1.0/security.md)** - Authentication and safety rules
 - **[Method Registry](SPEC/1.0/registry.md)** - Standard method names and error codes
 - **[Wire-Model Decisions](SPEC/1.0/wire-model-decisions.md)** - Canonical 1.0 wire naming and field choices
+- **[Attention And Execution Gating Architecture](SPEC/1.0/attention-and-execution-gating-architecture.md)** - Architecture and rollout note for additive attention support within `gabp/1`
 - **[AI Implementation Guide](SPEC/1.0/ai-implementation.md)** - AI-assisted development prompts and patterns
 
 ## Schemas

@@ -9,6 +9,7 @@ This directory contains the normative specification documents for GABP (Game Age
 - **[security.md](security.md)** - Security model and threat analysis
 - **[registry.md](registry.md)** - Method names, error codes, and URI schemes
 - **[wire-model-decisions.md](wire-model-decisions.md)** - Canonical 1.0 wire-model decisions
+- **[attention-and-execution-gating-architecture.md](attention-and-execution-gating-architecture.md)** - Architecture note for additive `gabp/1` attention and execution gating
 - **[ai-implementation.md](ai-implementation.md)** - AI implementer guide with prompts and patterns
 
 ## Reading Order
@@ -20,7 +21,8 @@ For implementers, we recommend reading the documents in this order:
 3. **security.md** - Understand the security model and authentication
 4. **registry.md** - Reference for method names, error codes, and extensibility rules
 5. **wire-model-decisions.md** - Canonical naming and field decisions for 1.0
-6. **ai-implementation.md** - AI-specific implementation guidance (for AI-assisted development)
+6. **attention-and-execution-gating-architecture.md** - Design note for future attention-aware execution gating
+7. **ai-implementation.md** - AI-specific implementation guidance (for AI-assisted development)
 
 ## Implementation Requirements
 
