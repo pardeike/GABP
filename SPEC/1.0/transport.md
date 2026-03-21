@@ -1,12 +1,13 @@
 # GABP 1.0 Transport Specification
 
-**Version**: 1.0  
-**Status**: Draft  
-**Date**: 2025-01-02
+**Version**: 1.0<br>
+**Status**: Stable<br>
+**Date**: 2026-03-21
 
 ## Abstract
 
-This document explains how GABP (Game Agent Bridge Protocol) connections work. It covers the different ways to connect, how messages are sent, and how connections are established.
+This document explains how GABP (Game Agent Bridge Protocol) connections work. It covers the different ways to connect,
+how messages are sent, and how connections are established.
 
 ## 1. Connection Methods
 
@@ -14,39 +15,39 @@ GABP implementations must support at least one of these connection methods:
 
 ### 1.1 Standard Input/Output (stdio)
 
-The game mod reads from standard input and writes to standard output. The bridge starts the mod process and talks to it through pipes.
+The game mod reads from standard input and writes to standard output. The bridge starts the mod process and talks to it
+through pipes.
 
-**How it works**: Bridge starts mod process and inherits stdin/stdout
-**Address**: Not needed (process-based)  
-**Security**: Process separation and token authentication
-**Best for**: Local development and testing
+- **How it works**: Bridge starts the mod process and inherits stdin/stdout
+- **Address**: Not needed (process-based)
+- **Security**: Process separation and token authentication
+- **Best for**: Local development and testing
 
 ### 1.2 TCP Socket
 
 TCP connections using the local computer only (127.0.0.1).
 
-**How it works**: Mod listens on 127.0.0.1 on an available port
-**Address**: `127.0.0.1:<port>` where port is set in configuration
-**Security**: Local-only connections + token authentication  
-**Best for**: When the game and AI agent need to run separately
+- **How it works**: Mod listens on 127.0.0.1 on an available port
+- **Address**: `127.0.0.1:<port>` where the port is set in configuration
+- **Security**: Local-only connections plus token authentication
+- **Best for**: When the game and AI agent need to run separately
 
 ### 1.3 Named Pipes (Windows) / Unix Sockets
 
 Platform-specific communication methods.
 
-**Windows**: Named pipes like `\\.\pipe\gabp-<identifier>`
-**Unix/Linux/macOS**: Unix sockets like `/tmp/gabp-<identifier>.sock`
-
-**How it works**: Mod creates the pipe/socket, bridge connects to it
-**Address**: Platform-specific path
-**Security**: File system permissions + token authentication
-**Best for**: High-performance local communication
+- **Windows**: Named pipes like `\\.\pipe\gabp-<identifier>`
+- **Unix/Linux/macOS**: Unix sockets like `/tmp/gabp-<identifier>.sock`
+- **How it works**: Mod creates the pipe or socket, and the bridge connects to it
+- **Address**: Platform-specific path
+- **Security**: File system permissions plus token authentication
+- **Best for**: High-performance local communication
 
 ## 2. Message Framing
 
 GABP uses LSP (Language Server Protocol) style framing for all transport methods:
 
-```
+```text
 Content-Length: <number-of-bytes>\r\n
 Content-Type: application/json\r\n
 \r\n
@@ -64,7 +65,7 @@ Content-Type: application/json\r\n
 
 ### 2.2 Example Framed Message
 
-```
+```text
 Content-Length: 156\r\n
 Content-Type: application/json\r\n
 \r\n
@@ -119,7 +120,7 @@ A typical AI agent development session follows this pattern:
 
 1. **Game Launch**: AI tool starts the game/application with mod loaded
 2. **Connection Setup**: Bridge establishes connection using one of the transport methods
-3. **Authentication**: Secure handshake using token-based authentication  
+3. **Authentication**: Secure handshake using token-based authentication
 4. **Discovery**: Agent discovers available game functionality via `tools/list` and `resources/list`
 5. **Interaction Loop**: Agent reads game state, executes actions, and monitors events
 6. **Cleanup**: Connection is terminated when session ends
@@ -139,7 +140,7 @@ This workflow enables AI agents to work like human developers:
 For AI agent development workflows:
 
 - **Automatic Reconnection**: Bridge should reconnect if game restarts during development
-- **Session Persistence**: Configuration and state should survive brief disconnections  
+- **Session Persistence**: Configuration and state should survive brief disconnections
 - **Resource Cleanup**: Proper cleanup when development session ends
 - **Error Recovery**: Graceful handling of game crashes or network issues
 
@@ -243,6 +244,7 @@ Common transport-level errors and handling:
 ### 7.3 Cross-Platform Libraries
 
 Implementations SHOULD use established cross-platform libraries for:
+
 - JSON parsing and generation
 - UUID generation
 - File system operations with proper permissions

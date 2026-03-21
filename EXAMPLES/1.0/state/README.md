@@ -1,10 +1,12 @@
 # State Management Examples
 
-This directory contains examples of GABP state management operations. State allows the bridge to get and set persistent game data.
+This directory contains examples of GABP state management operations. State allows the bridge to get and set persistent
+game data.
 
 ## State Concept
 
 State in GABP represents persistent data that can be:
+
 - **Read** by the bridge to understand current conditions
 - **Written** by the bridge to modify game state
 - **Shared** between multiple bridge connections
@@ -13,6 +15,7 @@ State in GABP represents persistent data that can be:
 ## Typical State Categories
 
 State is usually organized by scope and purpose:
+
 - **player/** - Player-specific data (stats, preferences, progress)
 - **world/** - World-persistent data (custom markers, modified areas)
 - **session/** - Current session data (temporary flags, runtime state)
@@ -21,6 +24,7 @@ State is usually organized by scope and purpose:
 ## State Operations
 
 ### Getting State
+
 Use `state/get` to retrieve current state values:
 
 ```json
@@ -36,18 +40,19 @@ Use `state/get` to retrieve current state values:
 ```
 
 ### Setting State
+
 Use `state/set` to update state values:
 
 ```json
 {
-  "v": "gabp/1", 
+  "v": "gabp/1",
   "id": "uuid-here",
   "type": "request",
   "method": "state/set",
   "params": {
     "updates": {
-      "player/stats": {"level": 5, "xp": 1250},
-      "world/markers": {"home": {"x": 100, "y": 64, "z": 200}}
+      "player/stats": { "level": 5, "xp": 1250 },
+      "world/markers": { "home": { "x": 100, "y": 64, "z": 200 } }
     }
   }
 }
@@ -62,6 +67,7 @@ Use `state/set` to update state values:
 ## Validation
 
 State examples validate against:
+
 - `../../../SCHEMA/1.0/envelope.schema.json`
 - `../../../SCHEMA/1.0/methods/state.get.request.json`
 - `../../../SCHEMA/1.0/methods/state.get.response.json`

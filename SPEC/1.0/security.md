@@ -1,12 +1,14 @@
 # GABP 1.0 Security Specification
 
-**Version**: 1.0  
-**Status**: Draft  
-**Date**: 2025-01-02
+**Version**: 1.0<br>
+**Status**: Stable<br>
+**Date**: 2026-03-21
 
 ## Abstract
 
-This document defines the security model, threat analysis, and authentication mechanisms for GABP (Game Agent Bridge Protocol). GABP prioritizes security through loopback-only connections, token-based authentication, and defense-in-depth principles.
+This document defines the security model, threat analysis, and authentication mechanisms for GABP (Game Agent Bridge
+Protocol). GABP prioritizes security through loopback-only connections, token-based authentication, and defense-in-depth
+principles.
 
 ## 1. Security Goals
 
@@ -63,7 +65,7 @@ GABP uses shared secret tokens for authentication:
 
 ### 3.3 Token Lifecycle
 
-```
+```text
 1. Bridge Startup
    ↓
 2. Generate Random Token
@@ -98,16 +100,19 @@ All network-based transports MUST use loopback interfaces only:
 ### 4.2 Transport-Specific Security
 
 #### stdio Transport
+
 - **Process Isolation**: Child process inherits minimal environment
 - **Pipe Security**: OS-provided pipe security between processes
 - **No Network**: Eliminates network-based attacks entirely
 
 #### TCP Transport
+
 - **Loopback Only**: Prevents remote network access
 - **Ephemeral Ports**: Use OS-assigned ephemeral ports when possible
 - **Connection Limits**: Implement reasonable connection limits
 
 #### Named Pipes/Unix Sockets
+
 - **File Permissions**: Restrict to owner (mode 0600)
 - **Path Security**: Use unpredictable paths with session identifiers
 - **Cleanup**: Remove pipe/socket on exit
@@ -186,17 +191,17 @@ function generateToken() {
 ```pseudocode
 function writeConfigSecurely(config, path) {
     tempPath = path + ".tmp." + randomString()
-    
+
     // Write to temporary file
     writeFile(tempPath, config)
-    
+
     // Set restrictive permissions
     setFilePermissions(tempPath, 0600) // Unix
     // or setFileACL(tempPath, currentUser) // Windows
-    
+
     // Atomic move
     moveFile(tempPath, path)
-    
+
     // Verify final permissions
     verifyPermissions(path)
 }

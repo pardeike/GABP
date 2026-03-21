@@ -1,6 +1,7 @@
 # Contributing to GABP
 
-Thank you for your interest in contributing to the Game Agent Bridge Protocol (GABP)! This document provides guidelines for contributing to the specification, schemas, and related materials.
+Thank you for your interest in contributing to the Game Agent Bridge Protocol (GABP)! This document provides guidelines
+for contributing to the specification, schemas, and related materials.
 
 ## How to Contribute
 
@@ -52,22 +53,25 @@ Changes to `EXAMPLES/1.0/` and `CONFORMANCE/1.0/`:
 ### Setting Up Your Environment
 
 1. **Clone the repository**:
+
    ```bash
    git clone <repository-url>
    cd GABP
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install -g ajv-cli@5
    npm install -g markdownlint-cli
    ```
 
 3. **Run validation**:
+
    ```bash
    # Validate schemas
    ajv -s SCHEMA/1.0/envelope.schema.json -d 'EXAMPLES/1.0/**/*.json'
-   
+
    # Check Markdown
    markdownlint README.md SPEC/1.0/*.md
    ```
@@ -75,6 +79,7 @@ Changes to `EXAMPLES/1.0/` and `CONFORMANCE/1.0/`:
 ### Making Changes
 
 1. **Create a feature branch**:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -82,18 +87,21 @@ Changes to `EXAMPLES/1.0/` and `CONFORMANCE/1.0/`:
 2. **Make your changes** following the appropriate guidelines
 
 3. **Validate your changes**:
+
    ```bash
    # Run the validation workflow locally
    .github/workflows/validate.yml # (or individual commands)
    ```
 
 4. **Commit your changes**:
+
    ```bash
    git add .
    git commit -m "Brief description of changes"
    ```
 
 5. **Push and create PR**:
+
    ```bash
    git push origin feature/your-feature-name
    ```

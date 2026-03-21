@@ -7,8 +7,8 @@ GABP-compliant bridges (clients) and mods (servers).
 
 ### Protocol Summary
 
-GABP (Game Agent Bridge Protocol) enables AI tools to communicate with game modifications using JSON messages
-over local connections. Think of it as a standardized API for AI-game interaction.
+GABP (Game Agent Bridge Protocol) enables AI tools to communicate with game modifications using JSON messages over local
+connections. Think of it as a standardized API for AI-game interaction.
 
 **Core Pattern**: Client (bridge/AI tool) ↔ Server (mod/game)
 
@@ -67,7 +67,7 @@ IMPLEMENTATION STEPS:
    - Handle events: {"type":"event","channel":"player/move","seq":0,"payload":{...}}
 
 5. ERROR HANDLING:
-   - Check response.error field 
+   - Check response.error field
    - Handle JSON-RPC error codes: -32601 (method not found), -32602 (invalid params), etc.
 
 6. ATTENTION-AWARE FLOW:
@@ -102,7 +102,7 @@ class GABPBridge {
 ```text
 I need to build a GABP mod server inside a game. Here are the requirements:
 
-PROTOCOL: GABP 1.0 - JSON-RPC-like protocol for AI-game communication  
+PROTOCOL: GABP 1.0 - JSON-RPC-like protocol for AI-game communication
 ROLE: Mod (server) exposing game functionality to AI bridges (clients)
 TRANSPORT: Listen on stdio, TCP localhost, or named pipes with LSP framing
 AUTH: Validate tokens against bridge config file
@@ -123,9 +123,9 @@ IMPLEMENTATION STEPS:
    - Implement tools/call: Execute named tool with arguments, return result
    - Map tools to actual game functions (inventory access, world modification, etc.)
 
-4. EVENT SYSTEM: 
+4. EVENT SYSTEM:
    - Implement events/subscribe: Track which channels each connection wants
-   - Hook into game's event system 
+   - Hook into game's event system
    - Emit events: {"type":"event","channel":"player/move","seq":N,"payload":{...}}
    - Maintain sequence numbers per channel
 
@@ -145,7 +145,7 @@ IMPLEMENTATION STEPS:
 
 GAME INTEGRATION POINTS:
 - Player events: movement, actions, chat
-- World events: block changes, entity spawns, weather  
+- World events: block changes, entity spawns, weather
 - Inventory tools: get/set player inventory
 - World tools: place/break blocks, spawn entities
 - Query tools: get player info, world state
@@ -175,7 +175,7 @@ TEST SCENARIOS:
 1. Connection and handshake flow
 2. Tool discovery and execution
 3. Event subscription and delivery
-4. Resource listing and reading  
+4. Resource listing and reading
 5. Error handling for invalid messages
 6. Concurrent request handling
 7. Connection drop/reconnect behavior
@@ -189,7 +189,7 @@ TEST STRUCTURE:
 
 VALIDATION CHECKLIST:
 □ All messages have correct envelope (v, id, type)
-□ Requests have method, responses have result OR error  
+□ Requests have method, responses have result OR error
 □ Events have channel, seq, payload
 □ UUIDs are properly formatted
 □ Error codes follow JSON-RPC convention
@@ -207,22 +207,20 @@ VALIDATION CHECKLIST:
 ```javascript
 function validateMessage(msg) {
   if (!msg.v || msg.v !== "gabp/1") throw new Error("Invalid version");
-  if (!msg.id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(msg.id)) 
+  if (!msg.id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(msg.id))
     throw new Error("Invalid UUID");
-  if (!["request","response","event"].includes(msg.type)) 
-    throw new Error("Invalid type");
-    
-  switch(msg.type) {
+  if (!["request", "response", "event"].includes(msg.type)) throw new Error("Invalid type");
+
+  switch (msg.type) {
     case "request":
       if (!msg.method) throw new Error("Request missing method");
       break;
-    case "response": 
+    case "response":
       if (!msg.result && !msg.error) throw new Error("Response missing result/error");
       if (msg.result && msg.error) throw new Error("Response has both result and error");
       break;
     case "event":
-      if (!msg.channel || typeof msg.seq !== "number" || !msg.payload) 
-        throw new Error("Invalid event structure");
+      if (!msg.channel || typeof msg.seq !== "number" || !msg.payload) throw new Error("Invalid event structure");
       break;
   }
 }
@@ -244,24 +242,24 @@ class LSPParser {
     this.buffer = "";
     this.expecting = null;
   }
-  
+
   parse(data) {
     this.buffer += data;
     const messages = [];
-    
+
     while (this.buffer.length > 0) {
       if (!this.expecting) {
-        const headerEnd = this.buffer.indexOf('\r\n\r\n');
+        const headerEnd = this.buffer.indexOf("\r\n\r\n");
         if (headerEnd === -1) break;
-        
+
         const header = this.buffer.slice(0, headerEnd);
         const match = header.match(/Content-Length: (\d+)/);
         if (!match) throw new Error("Invalid LSP header");
-        
+
         this.expecting = parseInt(match[1]);
         this.buffer = this.buffer.slice(headerEnd + 4);
       }
-      
+
       if (this.buffer.length >= this.expecting) {
         const json = this.buffer.slice(0, this.expecting);
         messages.push(JSON.parse(json));
@@ -271,7 +269,7 @@ class LSPParser {
         break;
       }
     }
-    
+
     return messages;
   }
 }
@@ -282,24 +280,24 @@ class LSPParser {
 ```javascript
 function createError(requestId, code, message, data = null) {
   return {
-    "v": "gabp/1",
-    "id": requestId,
-    "type": "response", 
-    "error": {
-      "code": code,
-      "message": message,
-      ...(data && { "data": data })
-    }
+    v: "gabp/1",
+    id: requestId,
+    type: "response",
+    error: {
+      code: code,
+      message: message,
+      ...(data && { data: data }),
+    },
   };
 }
 
 // Standard error codes
 const ERRORS = {
   INVALID_REQUEST: -32600,
-  METHOD_NOT_FOUND: -32601, 
+  METHOD_NOT_FOUND: -32601,
   INVALID_PARAMS: -32602,
   INTERNAL_ERROR: -32603,
-  PARSE_ERROR: -32700
+  PARSE_ERROR: -32700,
 };
 ```
 
@@ -311,27 +309,27 @@ class EventManager {
     this.sequences = new Map(); // channel -> sequence number
     this.subscriptions = new Map(); // connection -> Set<channels>
   }
-  
+
   subscribe(connection, channels) {
     if (!this.subscriptions.has(connection)) {
       this.subscriptions.set(connection, new Set());
     }
-    channels.forEach(ch => this.subscriptions.get(connection).add(ch));
+    channels.forEach((ch) => this.subscriptions.get(connection).add(ch));
   }
-  
+
   emit(channel, payload) {
     const seq = this.sequences.get(channel) || 0;
     this.sequences.set(channel, seq + 1);
-    
+
     const event = {
-      "v": "gabp/1",
-      "id": crypto.randomUUID(),
-      "type": "event",
-      "channel": channel, 
-      "seq": seq,
-      "payload": payload
+      v: "gabp/1",
+      id: crypto.randomUUID(),
+      type: "event",
+      channel: channel,
+      seq: seq,
+      payload: payload,
     };
-    
+
     // Send to subscribers
     for (let [conn, channels] of this.subscriptions) {
       if (channels.has(channel)) {
@@ -369,7 +367,7 @@ All JSON schemas are in `SCHEMA/1.0/` directory:
 ## Testing Resources
 
 - `EXAMPLES/1.0/` - Working message examples for all methods
-- `CONFORMANCE/1.0/valid/` - Messages that should validate successfully  
+- `CONFORMANCE/1.0/valid/` - Messages that should validate successfully
 - `CONFORMANCE/1.0/invalid/` - Messages that should fail validation
 
 Use these for comprehensive testing of your implementation.

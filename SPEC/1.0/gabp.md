@@ -1,12 +1,14 @@
 # GABP 1.0 Specification
 
-**Version**: 1.0  
-**Status**: Draft  
-**Date**: 2025-01-02
+**Version**: 1.0<br>
+**Status**: Stable<br>
+**Date**: 2026-03-21
 
 ## Abstract
 
-The Game Agent Bridge Protocol (GABP) is a JSON-RPC-inspired protocol that enables communication between game modification frameworks and external automation tools. This specification defines the message format, core methods, error handling, and extensibility rules for GABP version 1.0.
+The Game Agent Bridge Protocol (GABP) is a JSON-RPC-inspired protocol that enables communication between game
+modification frameworks and external automation tools. This specification defines the message format, core methods,
+error handling, and extensibility rules for GABP version 1.0.
 
 ## 1. Introduction
 
@@ -15,10 +17,11 @@ GABP enables communication between two types of programs:
 - **Bridge**: The client program that connects to a game mod (your AI tool or automation system)
 - **Mod**: The server program running inside a game (the game modification that exposes game functionality)
 
-This protocol is designed for AI agents, testing frameworks, and other automation systems that need to interact with games. Common use cases include:
+This protocol is designed for AI agents, testing frameworks, and other automation systems that need to interact with
+games. Common use cases include:
 
 - AI agents debugging game behavior during development
-- Automated testing of game features  
+- Automated testing of game features
 - AI-assisted game development and content creation
 - Remote game control for research and analysis
 
@@ -32,17 +35,20 @@ GABP supports AI agent development workflows similar to how human developers wor
 4. **Interaction**: AI agent can read game state, execute actions, and monitor events
 5. **Debugging**: Real-time event monitoring and state inspection for debugging
 
-This enables AI agents to verify code changes during development, just like human developers start applications to test their modifications.
+This enables AI agents to verify code changes during development, just like human developers start applications to test
+their modifications.
 
 ## 2. Conformance
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+"OPTIONAL" in this document are to be interpreted as described in RFC 2119.
 
 ## 3. Message Format
 
 ### 3.1 Envelope
 
-All GABP messages are JSON objects that conform to a common envelope structure. A message MUST be a JSON object with the following properties:
+All GABP messages are JSON objects that conform to a common envelope structure. A message MUST be a JSON object with the
+following properties:
 
 - `v` (string, required): Protocol version identifier. MUST be `"gabp/1"` for version 1.x
 - `id` (string, required): Unique identifier for the message, formatted as a UUID
@@ -58,6 +64,7 @@ A request message has `type` of `"request"` and MUST include:
 Request messages MUST NOT include `result`, `error`, `channel`, `seq`, or `payload` properties.
 
 Example:
+
 ```json
 {
   "v": "gabp/1",
@@ -78,11 +85,13 @@ A response message has `type` of `"response"` and MUST include exactly one of:
 Response messages MUST NOT include `method`, `params`, `channel`, `seq`, or `payload` properties.
 
 The `error` object, when present, MUST contain:
+
 - `code` (integer, required): Numeric error code
 - `message` (string, required): Human-readable error description
 - `data` (any type, optional): Additional error-specific data
 
 Example success:
+
 ```json
 {
   "v": "gabp/1",
@@ -95,6 +104,7 @@ Example success:
 ```
 
 Example error:
+
 ```json
 {
   "v": "gabp/1",
@@ -103,7 +113,7 @@ Example error:
   "error": {
     "code": -32601,
     "message": "Method not found",
-    "data": {"method": "unknown/method"}
+    "data": { "method": "unknown/method" }
   }
 }
 ```
@@ -119,6 +129,7 @@ An event message has `type` of `"event"` and MUST include:
 Event messages MUST NOT include `method`, `params`, `result`, or `error` properties.
 
 Example:
+
 ```json
 {
   "v": "gabp/1",
@@ -128,7 +139,7 @@ Example:
   "seq": 42,
   "payload": {
     "playerId": "steve",
-    "position": {"x": 100, "y": 64, "z": 200}
+    "position": { "x": 100, "y": 64, "z": 200 }
   }
 }
 ```
@@ -144,6 +155,7 @@ GABP defines several core methods that compliant implementations SHOULD support:
 Initiates a connection from bridge to mod.
 
 **Request Parameters**:
+
 - `token` (string, required): Authentication token
 - `bridgeVersion` (string, required): Bridge software version
 - `platform` (string, required): Operating system ("windows", "macos", or "linux")
@@ -154,6 +166,7 @@ Initiates a connection from bridge to mod.
 Response to `session/hello` indicating successful authentication.
 
 **Response Result**:
+
 - `agentId` (string, required): Unique identifier for the mod instance
 - `app` (object, required): Application information
   - `name` (string, required): Game or application name
@@ -170,6 +183,7 @@ Lists available tools/methods provided by the mod.
 **Request Parameters**: None
 
 **Response Result**:
+
 - `tools` (array, required): Array of tool objects (see tool schema)
 
 #### tools/call
@@ -177,6 +191,7 @@ Lists available tools/methods provided by the mod.
 Invokes a specific tool with arguments.
 
 **Request Parameters**:
+
 - `name` (string, required): Tool name to invoke
 - `arguments` (object, optional): Arguments for the tool
 
@@ -189,9 +204,11 @@ Invokes a specific tool with arguments.
 Subscribes to one or more event channels.
 
 **Request Parameters**:
+
 - `channels` (array, required): Array of channel name strings
 
 **Response Result**:
+
 - `subscribed` (array, required): Array of successfully subscribed channel names
 
 #### events/unsubscribe
@@ -199,9 +216,11 @@ Subscribes to one or more event channels.
 Unsubscribes from one or more event channels.
 
 **Request Parameters**:
+
 - `channels` (array, required): Array of channel name strings
 
 **Response Result**:
+
 - `unsubscribed` (array, required): Array of successfully unsubscribed channel names
 
 ### 4.4 Resource Management
@@ -211,9 +230,11 @@ Unsubscribes from one or more event channels.
 Lists available resources that can be read by the bridge.
 
 **Request Parameters**:
-- `pattern` (string, optional): Glob pattern to filter resources (e.g., "world/*", "config/*.json")
+
+- `pattern` (string, optional): Glob pattern to filter resources (e.g., "world/_", "config/_.json")
 
 **Response Result**:
+
 - `resources` (array, required): Array of resource objects, each containing:
   - `uri` (string, required): Resource URI
   - `name` (string, required): Human-readable resource name
@@ -226,9 +247,11 @@ Lists available resources that can be read by the bridge.
 Reads the content of a specific resource.
 
 **Request Parameters**:
+
 - `uri` (string, required): Resource URI to read
 
 **Response Result**:
+
 - `content` (any type, required): Resource content (string for text, base64 for binary)
 - `mimeType` (string, optional): MIME type of the content
 - `encoding` (string, optional): Content encoding ("utf-8", "base64", etc.)
@@ -240,10 +263,12 @@ Reads the content of a specific resource.
 Gets the current game state or specific state components.
 
 **Request Parameters**:
+
 - `components` (array, optional): Array of state component names to retrieve
 - `playerId` (string, optional): Player ID for player-specific state
 
 **Response Result**:
+
 - `state` (object, required): Current game state data
 - `timestamp` (integer, required): Unix timestamp when state was captured
 
@@ -252,21 +277,21 @@ Gets the current game state or specific state components.
 Sets or modifies game state (if supported by the game).
 
 **Request Parameters**:
+
 - `updates` (object, required): State updates to apply
 - `playerId` (string, optional): Player ID for player-specific updates
 - `validate` (boolean, optional): Whether to validate updates before applying
 
 **Response Result**:
+
 - `applied` (object, required): Successfully applied updates
 
 ### 4.6 Attention Management
 
-Attention support is OPTIONAL and MUST be discovered through `capabilities.methods`
-and `capabilities.events`.
+Attention support is OPTIONAL and MUST be discovered through `capabilities.methods` and `capabilities.events`.
 
-The attention surface is intended for important summarized game-side information
-that can invalidate an agent's assumptions or should otherwise affect execution
-ordering.
+The attention surface is intended for important summarized game-side information that can invalidate an agent's
+assumptions or should otherwise affect execution ordering.
 
 #### attention/current
 
@@ -275,29 +300,28 @@ Returns the current open attention item, if any.
 **Request Parameters**: None
 
 **Response Result**:
-- `attention` (object or `null`, required): The current attention item, or `null`
-  when no attention item is open
+
+- `attention` (object or `null`, required): The current attention item, or `null` when no attention item is open
 
 #### attention/ack
 
 Acknowledges a specific attention item explicitly.
 
 **Request Parameters**:
-- `attentionId` (string, required): Stable attention identifier returned by
-  `attention/current`, a lifecycle event, or another implementation-defined
-  response that references the item
+
+- `attentionId` (string, required): Stable attention identifier returned by `attention/current`, a lifecycle event, or
+  another implementation-defined response that references the item
 
 **Response Result**:
-- `acknowledged` (boolean, required): Whether the requested attention item was
-  accepted as acknowledged
+
+- `acknowledged` (boolean, required): Whether the requested attention item was accepted as acknowledged
 - `attentionId` (string, required): The attention id that was requested
-- `currentAttention` (object or `null`, required): The currently open attention
-  item after the ack attempt, or `null` when none remains open
+- `currentAttention` (object or `null`, required): The currently open attention item after the ack attempt, or `null`
+  when none remains open
 
 ### 4.7 Attention Event Channels
 
-Implementations that support attention SHOULD expose lifecycle channels through
-`capabilities.events`.
+Implementations that support attention SHOULD expose lifecycle channels through `capabilities.events`.
 
 Recommended canonical channels:
 
@@ -307,19 +331,21 @@ Recommended canonical channels:
 
 These event channels all carry the same summarized attention object payload.
 
-The bridge SHOULD treat asynchronous attention events as informative and
-low-latency, but SHOULD rely on its own execution gate or other implementation
-policy at the next game-bound decision point instead of assuming the host will
+The bridge SHOULD treat asynchronous attention events as informative and low-latency, but SHOULD rely on its own
+execution gate or other implementation policy at the next game-bound decision point instead of assuming the host will
 immediately inject the event into active reasoning.
+
 - `errors` (array, optional): Array of validation or application errors
 
 ## 5. Method Names
 
-Method names MUST follow the pattern `^[a-z]+(/[a-z]+)+$` (lowercase segments separated by forward slashes). The first segment typically represents a namespace or category.
+Method names MUST follow the pattern `^[a-z]+(/[a-z]+)+$` (lowercase segments separated by forward slashes). The first
+segment typically represents a namespace or category.
 
 Reserved method namespaces:
+
 - `session/*` - Session management
-- `tools/*` - Tool discovery and invocation  
+- `tools/*` - Tool discovery and invocation
 - `events/*` - Event subscription management
 - `resources/*` - Resource access
 - `state/*` - Game state management
@@ -340,11 +366,13 @@ Custom error codes SHOULD use ranges outside of the JSON-RPC reserved ranges.
 
 ### 7.1 Custom Methods
 
-Implementations MAY define custom methods beyond the core set. Custom method names MUST follow the naming pattern and SHOULD use implementation-specific namespaces to avoid conflicts.
+Implementations MAY define custom methods beyond the core set. Custom method names MUST follow the naming pattern and
+SHOULD use implementation-specific namespaces to avoid conflicts.
 
 ### 7.2 Protocol Versioning
 
 The protocol version `gabp/1` allows for additive changes only:
+
 - New optional fields in existing messages
 - New methods
 - New error codes
@@ -353,7 +381,8 @@ Breaking changes require a new major version (e.g., `gabp/2`).
 
 ### 7.3 Capability Negotiation
 
-Implementations MUST use the `capabilities` object in the `session/welcome` response to advertise supported features. Bridges SHOULD check capabilities before attempting to use optional features.
+Implementations MUST use the `capabilities` object in the `session/welcome` response to advertise supported features.
+Bridges SHOULD check capabilities before attempting to use optional features.
 
 ## 8. Message Ordering
 
@@ -381,6 +410,7 @@ A compliant GABP implementation MUST:
 - Support at least one transport method (see transport.md)
 
 A compliant implementation SHOULD:
+
 - Implement the core methods defined in Section 4
 - Support event subscriptions and delivery
 - Provide meaningful error messages
@@ -389,25 +419,26 @@ A compliant implementation SHOULD:
 ## 11. Security Considerations
 
 See [security.md](security.md) for detailed security considerations including:
+
 - Token-based authentication
 - Transport security
 - Threat model analysis
 
 ## 12. AI Implementation Guide
 
-This section provides compressed information and practical guidance specifically for AI assistants and automated 
-tools building GABP-compliant implementations.
+This section provides compressed information and practical guidance specifically for AI assistants and automated tools
+building GABP-compliant implementations.
 
 ### 12.1 Protocol Summary for AI Context
 
-**Core Concept**: GABP is a JSON-RPC-inspired protocol enabling AI tools (bridges) to communicate with 
-game modifications (mods). Think of it as a standardized API for AI-game interaction.
+**Core Concept**: GABP is a JSON-RPC-inspired protocol enabling AI tools (bridges) to communicate with game
+modifications (mods). Think of it as a standardized API for AI-game interaction.
 
 **Key Components**:
 
 - **Envelope**: All messages are JSON with `{"v":"gabp/1", "id":"uuid", "type":"request|response|event"}`
 - **Transport**: stdio, TCP localhost, or named pipes with LSP-style headers
-- **Auth**: Shared token from config file, loopback-only connections  
+- **Auth**: Shared token from config file, loopback-only connections
 - **Methods**: Namespaced like `session/hello`, `tools/list`, `events/subscribe`
 - **Errors**: JSON-RPC style with numeric codes (-32xxx for standard, -31xxx for custom)
 
@@ -433,7 +464,7 @@ Create a GABP bridge client that:
    {
      "v": "gabp/1",
      "id": "<uuid>",
-     "type": "request", 
+     "type": "request",
      "method": "session/hello",
      "params": {
        "token": "<from-config>",
@@ -447,7 +478,7 @@ Create a GABP bridge client that:
    result.capabilities.methods = ["tools/list", "tools/call"]
    result.capabilities.events = ["player/move", "world/block_change"]
 
-4. OPERATIONS: 
+4. OPERATIONS:
    - Call tools: tools/call method with tool name and arguments
    - Subscribe to events: events/subscribe with channel names
    - Handle async events with proper sequencing
@@ -455,7 +486,7 @@ Create a GABP bridge client that:
 5. ERROR HANDLING: Check response.error field, map JSON-RPC codes to actions
 
 Implementation requirements:
-- Validate all messages against JSON schemas  
+- Validate all messages against JSON schemas
 - Handle connection drops gracefully
 - Implement proper UUID generation
 - Support concurrent request/response pairs
@@ -465,7 +496,7 @@ Implementation requirements:
 #### Bridge Implementation Checklist
 
 - [ ] **Transport Layer**: Implement LSP framing for chosen transport (stdio/TCP/pipes)
-- [ ] **Config Reader**: Parse token from platform-specific config location  
+- [ ] **Config Reader**: Parse token from platform-specific config location
 - [ ] **Message Validation**: Validate outgoing requests and incoming responses
 - [ ] **Session Management**: Handle hello/welcome handshake and capability parsing
 - [ ] **Request/Response**: Support async request handling with UUID matching
@@ -493,7 +524,7 @@ Create a GABP mod server that:
        "app": {"name": "MyGame", "version": "1.2.0"},
        "capabilities": {
          "methods": ["tools/list", "tools/call", "events/subscribe"],
-         "events": ["player/move", "world/block_change"], 
+         "events": ["player/move", "world/block_change"],
          "resources": ["gabp://game/world/schematic"]
        },
        "schemaVersion": "1.0"
@@ -524,7 +555,7 @@ Game integration points:
 - [ ] **Transport Server**: Accept connections on chosen transport with LSP parsing
 - [ ] **Token Validation**: Verify tokens against bridge config file
 - [ ] **Capability Declaration**: Advertise available tools/events/resources accurately
-- [ ] **Tool Implementation**: Map GABP tools to actual game functionality  
+- [ ] **Tool Implementation**: Map GABP tools to actual game functionality
 - [ ] **Event Broadcasting**: Hook game events and broadcast to subscribed channels
 - [ ] **Resource Exposure**: Provide URI-based access to game data
 - [ ] **State Management**: Track per-connection subscriptions and session state
@@ -538,13 +569,12 @@ Game integration points:
 // Validate envelope structure for all messages
 function validateGABPMessage(msg) {
   if (!msg.v || msg.v !== "gabp/1") throw new Error("Invalid version");
-  if (!msg.id || !isValidUUID(msg.id)) throw new Error("Invalid ID");  
-  if (!["request","response","event"].includes(msg.type)) throw new Error("Invalid type");
-  
+  if (!msg.id || !isValidUUID(msg.id)) throw new Error("Invalid ID");
+  if (!["request", "response", "event"].includes(msg.type)) throw new Error("Invalid type");
+
   if (msg.type === "request" && !msg.method) throw new Error("Missing method");
   if (msg.type === "response" && !(msg.result || msg.error)) throw new Error("Missing result/error");
-  if (msg.type === "event" && !(msg.channel && typeof msg.seq === "number")) 
-    throw new Error("Invalid event");
+  if (msg.type === "event" && !(msg.channel && typeof msg.seq === "number")) throw new Error("Invalid event");
 }
 ```
 
@@ -554,14 +584,14 @@ function validateGABPMessage(msg) {
 // Standard error response format
 function createErrorResponse(requestId, code, message, data = null) {
   return {
-    "v": "gabp/1",
-    "id": requestId, 
-    "type": "response",
-    "error": {
-      "code": code,        // Use standard JSON-RPC codes
-      "message": message,  // Human-readable description
-      "data": data         // Optional additional context
-    }
+    v: "gabp/1",
+    id: requestId,
+    type: "response",
+    error: {
+      code: code, // Use standard JSON-RPC codes
+      message: message, // Human-readable description
+      data: data, // Optional additional context
+    },
   };
 }
 ```
@@ -575,20 +605,20 @@ class EventEmitter {
     this.sequences = new Map(); // channel -> seq number
     this.subscriptions = new Map(); // connection -> Set<channel>
   }
-  
+
   emit(channel, payload) {
     const seq = this.sequences.get(channel) || 0;
     this.sequences.set(channel, seq + 1);
-    
+
     const event = {
-      "v": "gabp/1",
-      "id": generateUUID(),
-      "type": "event", 
-      "channel": channel,
-      "seq": seq,
-      "payload": payload
+      v: "gabp/1",
+      id: generateUUID(),
+      type: "event",
+      channel: channel,
+      seq: seq,
+      payload: payload,
     };
-    
+
     // Send to all subscribers
     for (let [conn, channels] of this.subscriptions) {
       if (channels.has(channel)) {
@@ -604,7 +634,7 @@ class EventEmitter {
 #### Debug Checklist
 
 - [ ] **Message Logging**: Log all sent/received messages with timestamps
-- [ ] **Schema Validation**: Validate against official JSON schemas in SCHEMA/1.0/  
+- [ ] **Schema Validation**: Validate against official JSON schemas in SCHEMA/1.0/
 - [ ] **Conformance Tests**: Test with examples in CONFORMANCE/1.0/valid/
 - [ ] **Error Simulation**: Test with invalid messages in CONFORMANCE/1.0/invalid/
 - [ ] **Connection Handling**: Test disconnect/reconnect scenarios
@@ -621,18 +651,18 @@ async function testGABPIntegration() {
   await bridge.connect();
   const welcome = await bridge.hello(token);
   assert(welcome.capabilities);
-  
-  // 2. Test tool discovery and execution  
+
+  // 2. Test tool discovery and execution
   const tools = await bridge.listTools();
   assert(tools.length > 0);
   const result = await bridge.callTool(tools[0].name, {});
   assert(result !== undefined);
-  
+
   // 3. Test event subscription
   const events = [];
   await bridge.subscribe(["test/channel"]);
-  bridge.on("event", e => events.push(e));
-  
+  bridge.on("event", (e) => events.push(e));
+
   // Trigger event somehow...
   await sleep(100);
   assert(events.length > 0);
@@ -643,7 +673,7 @@ async function testGABPIntegration() {
 ### 12.6 Performance and Scaling Considerations
 
 - **Connection Pooling**: Bridge implementations should reuse connections when possible
-- **Event Batching**: Group related events to reduce message overhead  
+- **Event Batching**: Group related events to reduce message overhead
 - **Resource Caching**: Cache frequently-accessed resources to reduce mod load
 - **Schema Caching**: Cache and reuse parsed JSON schemas for validation
 - **Connection Limits**: Mods should limit concurrent connections to prevent DoS

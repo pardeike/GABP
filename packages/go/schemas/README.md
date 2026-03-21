@@ -2,7 +2,8 @@
 
 Versioned GABP schema assets for Go consumers.
 
-This module embeds a copy of the canonical `SCHEMA/1.0` tree from this repository, rooted at `schema/`, so Go code can read the same versioned artifacts used by the protocol release.
+This module embeds a copy of the canonical `SCHEMA/1.0` tree from this repository, rooted at `schema/`, so Go code can
+read the same versioned artifacts used by the protocol release.
 
 ## Module Path
 
@@ -16,7 +17,7 @@ When consuming a tagged release:
 go get github.com/pardeike/GABP/packages/go/schemas@latest
 ```
 
-Releases use subdirectory-prefixed tags such as `packages/go/schemas/v1.0.3`.
+Releases use subdirectory-prefixed tags such as `packages/go/schemas/v1.1.0`.
 
 ## API Surface
 
@@ -27,7 +28,8 @@ Releases use subdirectory-prefixed tags such as `packages/go/schemas/v1.0.3`.
 - `Exists(name)` reports whether a schema path exists.
 - `List()` returns all embedded schema and README paths.
 
-You may pass either a versioned path such as `1.0/envelope.schema.json` or a path relative to the current schema version such as `common/tool.schema.json`.
+You may pass either a versioned path such as `1.0/envelope.schema.json` or a path relative to the current schema version
+such as `common/tool.schema.json`.
 
 Examples of versioned paths:
 
@@ -59,7 +61,8 @@ func main() {
 
 ## Syncing Embedded Assets
 
-The Go package carries a copied `schema/1.0` tree because `go:embed` cannot include files from outside the package directory.
+The Go package carries a copied `schema/1.0` tree because `go:embed` cannot include files from outside the package
+directory.
 
 When `SCHEMA/1.0` changes, resync the embedded copy with:
 

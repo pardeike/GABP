@@ -1,6 +1,8 @@
 # GABP (Game Agent Bridge Protocol)
 
-GABP is a communication protocol that lets AI tools talk to games. It works like a bridge between AI agents and game modifications. This allows AI systems, testing tools, and other programs to control and interact with games in a standard way.
+GABP is a communication protocol that lets AI tools talk to games. It works like a bridge between AI agents and game
+modifications. This allows AI systems, testing tools, and other programs to control and interact with games in a
+standard way.
 
 ## Status
 
@@ -8,14 +10,17 @@ GABP is a communication protocol that lets AI tools talk to games. It works like
 **Repository Versioning**: SemVer  
 **Wire Protocol Version**: `gabp/1`
 
-The protocol uses semantic versioning for repository releases. The wire protocol version `gabp/1` represents the major version and will only include additive changes within the 1.x series. Breaking changes will require `gabp/2` and new schema folders.
+The protocol uses semantic versioning for repository releases. The wire protocol version `gabp/1` represents the major
+version and will only include additive changes within the 1.x series. Breaking changes will require `gabp/2` and new
+schema folders.
 
 ## What is GABP?
 
 GABP defines these key parts:
+
 - **Message Format**: JSON messages that look like JSON-RPC with requests, responses, and events
 - **Transport Layer**: Works with stdio, TCP connections (local only), and pipes/sockets
-- **Security Model**: Uses tokens for authentication and only allows local connections  
+- **Security Model**: Uses tokens for authentication and only allows local connections
 - **Method Registry**: Standard names for methods and error codes
 - **Capability Negotiation**: Handshake process to discover what features are available
 
@@ -28,11 +33,12 @@ GABP defines these key parts:
 ## Documentation
 
 - **[Main Specification](SPEC/1.0/gabp.md)** - Complete protocol rules and requirements
-- **[Transport & Connections](SPEC/1.0/transport.md)** - How to connect and send messages  
+- **[Transport & Connections](SPEC/1.0/transport.md)** - How to connect and send messages
 - **[Security Guide](SPEC/1.0/security.md)** - Authentication and safety rules
 - **[Method Registry](SPEC/1.0/registry.md)** - Standard method names and error codes
 - **[Wire-Model Decisions](SPEC/1.0/wire-model-decisions.md)** - Canonical 1.0 wire naming and field choices
-- **[Attention And Execution Gating Architecture](SPEC/1.0/attention-and-execution-gating-architecture.md)** - Architecture and rollout note for additive attention support within `gabp/1`
+- **[Attention And Execution Gating Architecture](SPEC/1.0/attention-and-execution-gating-architecture.md)** -
+  Architecture and rollout note for additive attention support within `gabp/1`
 - **[AI Implementation Guide](SPEC/1.0/ai-implementation.md)** - AI-assisted development prompts and patterns
 
 ## Schemas
@@ -65,6 +71,7 @@ ajv -s SCHEMA/1.0/envelope.schema.json -d 'your-message.json'
 ### Conformance Tests
 
 The [`CONFORMANCE/1.0/`](CONFORMANCE/1.0/) directory contains:
+
 - [`valid/`](CONFORMANCE/1.0/valid/) - Messages that should validate successfully
 - [`invalid/`](CONFORMANCE/1.0/invalid/) - Messages that should fail validation
 
@@ -75,8 +82,7 @@ The [`CONFORMANCE/1.0/`](CONFORMANCE/1.0/) directory contains:
 3. **Discover**: Use `tools/list` to see what the game can do
 4. **Interact**: Call methods, subscribe to events, and read resources
 
-Optional additive support within `gabp/1` lets implementations expose
-important summarized game-side state through:
+Optional additive support within `gabp/1` lets implementations expose important summarized game-side state through:
 
 - `attention/current`
 - `attention/ack`
@@ -84,8 +90,8 @@ important summarized game-side state through:
 - `attention/updated`
 - `attention/cleared`
 
-Bridges MUST discover that support through `capabilities.methods` and
-`capabilities.events` instead of assuming it is always present.
+Bridges MUST discover that support through `capabilities.methods` and `capabilities.events` instead of assuming it is
+always present.
 
 Basic handshake example:
 
@@ -134,39 +140,46 @@ Basic handshake example:
 
 ## Packages
 
-The repository includes three versioned schema packages, all sourced from the canonical [`SCHEMA/1.0/`](SCHEMA/1.0/) tree.
+The repository includes three versioned schema packages, all sourced from the canonical [`SCHEMA/1.0/`](SCHEMA/1.0/)
+tree.
 
 ### JavaScript/Node.js
 
-The [`gabp-schemas`](packages/js/gabp-schemas/README.md) package bundles the schema tree and exposes preloaded validators for Node.js and TypeScript consumers.
+The [`gabp-schemas`](packages/js/gabp-schemas/README.md) package bundles the schema tree and exposes preloaded
+validators for Node.js and TypeScript consumers.
 
 ```bash
 npm install gabp-schemas
 ```
 
 ```javascript
-const { validateRequest } = require('gabp-schemas');
+const { validateRequest } = require("gabp-schemas");
 
-const message = { /* your GABP request */ };
+const message = {
+  /* your GABP request */
+};
 const result = validateRequest(message);
 if (!result.valid) {
-  console.error('Validation errors:', result.errors);
+  console.error("Validation errors:", result.errors);
 }
 ```
 
 ### .NET
 
-The [`Gabp.Schemas`](packages/dotnet/Gabp.Schemas/README.md) package embeds the same schema assets and exposes them through the `SchemaAssets` API for .NET consumers.
+The [`Gabp.Schemas`](packages/dotnet/Gabp.Schemas/README.md) package embeds the same schema assets and exposes them
+through the `SchemaAssets` API for .NET consumers.
 
 NuGet package ID: `Gabp.Schemas`
 
 ### Go
 
-The [`github.com/pardeike/GABP/packages/go/schemas`](packages/go/schemas/README.md) module embeds the same versioned schema assets for Go consumers.
+The [`github.com/pardeike/GABP/packages/go/schemas`](packages/go/schemas/README.md) module embeds the same versioned
+schema assets for Go consumers.
 
 Module path: `github.com/pardeike/GABP/packages/go/schemas`
 
-Repository releases for the npm package and NuGet package use top-level tags such as `v1.0.3`. The Go module uses subdirectory-prefixed tags such as `packages/go/schemas/v1.0.3`.
+Repository releases for the npm package and NuGet package use top-level tags such as `v1.1.0`. The Go module uses
+subdirectory-prefixed tags such as `packages/go/schemas/v1.1.0`.
 
 ## Contributing
 

@@ -1,26 +1,32 @@
 # Common Schemas
 
-This directory contains shared JSON Schema definitions used across multiple GABP message types. These schemas define reusable components that maintain consistency across the protocol.
+This directory contains shared JSON Schema definitions used across multiple GABP message types. These schemas define
+reusable components that maintain consistency across the protocol.
 
 ## Schema Files
 
 - **[error.schema.json](error.schema.json)** - Error object structure for response messages
 - **[tool.schema.json](tool.schema.json)** - Tool definition structure for tools/list responses
 - **[capabilities.schema.json](capabilities.schema.json)** - Capability declaration for session/welcome
-- **[attention.schema.json](attention.schema.json)** - Summarized attention item structure for attention methods and lifecycle events
+- **[attention.schema.json](attention.schema.json)** - Summarized attention item structure for attention methods and
+  lifecycle events
 
 ## Error Schema
 
 Defines the structure for error objects in response messages:
+
 ```json
 {
   "code": -32601,
-  "message": "Method not found", 
-  "data": { /* optional additional error data */ }
+  "message": "Method not found",
+  "data": {
+    /* optional additional error data */
+  }
 }
 ```
 
 Key properties:
+
 - **code** - Integer error code (follows JSON-RPC conventions)
 - **message** - Human-readable error description
 - **data** - Optional additional error information
@@ -28,28 +34,35 @@ Key properties:
 ## Tool Schema
 
 Defines the structure for tool definitions in tools/list responses:
+
 ```json
 {
   "name": "inventory/get_items",
   "title": "Get Player Items",
   "description": "Retrieve items from a player's inventory",
-  "inputSchema": { /* JSON Schema for arguments */ },
-  "outputSchema": { /* JSON Schema for results */ },
+  "inputSchema": {
+    /* JSON Schema for arguments */
+  },
+  "outputSchema": {
+    /* JSON Schema for results */
+  },
   "tags": ["inventory", "player"]
 }
 ```
 
 Key properties:
+
 - **name** - Unique tool identifier (lowercase with slashes)
 - **title** - Human-readable tool name
 - **description** - What the tool does
 - **inputSchema** - JSON Schema for tool arguments
-- **outputSchema** - JSON Schema for tool results  
+- **outputSchema** - JSON Schema for tool results
 - **tags** - Optional categorization tags
 
 ## Capabilities Schema
 
 Defines the structure for capability declarations in session/welcome:
+
 ```json
 {
   "methods": ["tools/list", "tools/call", "events/subscribe"],
@@ -59,6 +72,7 @@ Defines the structure for capability declarations in session/welcome:
 ```
 
 Key properties:
+
 - **methods** - Array of available protocol method names
 - **events** - Array of available event channel names
 - **resources** - Array of available resource URI patterns
@@ -97,6 +111,7 @@ These common schemas are referenced by other schemas using JSON Schema `$ref`:
 ## Validation
 
 Common schemas can be validated independently:
+
 ```bash
 ajv -s error.schema.json -d 'example-error.json'
 ajv -s tool.schema.json -d 'example-tool.json'

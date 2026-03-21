@@ -1,8 +1,7 @@
 # GABP 1.0 Wire-Model Decisions
 
-This note records the canonical wire-model decisions for GABP 1.0 so that
-specification text, schemas, examples, conformance fixtures, and downstream
-runtime packages stay aligned.
+This note records the canonical wire-model decisions for GABP 1.0 so that specification text, schemas, examples,
+conformance fixtures, and downstream runtime packages stay aligned.
 
 ## Scope
 
@@ -14,8 +13,7 @@ They do not govern downstream adapter layers such as:
 - OpenAI-safe tool name normalization
 - implementation-specific API conveniences
 
-Those layers may transform names for external ecosystems, but the native GABP
-wire format remains canonical.
+Those layers may transform names for external ecosystems, but the native GABP wire format remains canonical.
 
 ## Canonical Decisions
 
@@ -39,11 +37,9 @@ The canonical request shape for `tools/call` is:
 
 ### 2. Session capabilities use `methods`
 
-The `session/welcome` `capabilities` object advertises supported protocol
-methods via `capabilities.methods`.
+The `session/welcome` `capabilities` object advertises supported protocol methods via `capabilities.methods`.
 
-Tool discovery is performed with `tools/list`, not by listing tool names inside
-`session/welcome`.
+Tool discovery is performed with `tools/list`, not by listing tool names inside `session/welcome`.
 
 ### 3. Native tool identifiers use slash-separated names
 
@@ -74,15 +70,12 @@ This disallows:
 
 ### 4. Protocol methods and native tool names are distinct concepts
 
-Protocol methods such as `session/hello`, `tools/list`, and `events/subscribe`
-control the wire protocol itself.
+Protocol methods such as `session/hello`, `tools/list`, and `events/subscribe` control the wire protocol itself.
 
-Native tool names such as `inventory/get` or `world/place_block` identify
-implementation-defined tools that are invoked through the `tools/call` protocol
-method.
+Native tool names such as `inventory/get` or `world/place_block` identify implementation-defined tools that are invoked
+through the `tools/call` protocol method.
 
-Both use slash-separated namespace-style identifiers, but they occupy different
-domains.
+Both use slash-separated namespace-style identifiers, but they occupy different domains.
 
 ### 5. Attention uses explicit methods, lifecycle channels, and stable ids
 
@@ -96,8 +89,7 @@ The canonical additive attention surface within `gabp/1` uses:
   - `attention/updated`
   - `attention/cleared`
 
-Attention payloads use a stable `attentionId` so the same item can be referenced
-consistently across:
+Attention payloads use a stable `attentionId` so the same item can be referenced consistently across:
 
 - lifecycle events
 - attention inspection methods

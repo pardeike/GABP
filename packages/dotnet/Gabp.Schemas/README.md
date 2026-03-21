@@ -2,7 +2,8 @@
 
 Versioned GABP schema assets for .NET consumers.
 
-This package embeds the canonical `SCHEMA/1.0` tree from this repository and exposes those files through `SchemaAssets`, so .NET consumers can read the same versioned artifacts used by the protocol release.
+This package embeds the canonical `SCHEMA/1.0` tree from this repository and exposes those files through `SchemaAssets`,
+so .NET consumers can read the same versioned artifacts used by the protocol release.
 
 ## Package Identity
 
@@ -23,7 +24,8 @@ dotnet add package Gabp.Schemas
 - `SchemaAssets.Open(path)` opens an embedded asset as a `Stream`.
 - `SchemaAssets.ReadAllText(path)` reads an embedded asset as UTF-8 text.
 
-Paths may be versioned, such as `1.0/methods/tools.call.request.json`, or relative to the current schema version, such as `methods/tools.call.request.json`.
+Paths may be versioned, such as `1.0/methods/tools.call.request.json`, or relative to the current schema version, such
+as `methods/tools.call.request.json`.
 
 ## Usage
 
@@ -46,4 +48,5 @@ foreach (var path in SchemaAssets.ListPaths())
 
 ## Scope
 
-This package only ships schema assets and a small access API. It does not implement transport, request handling, or a higher-level GABP runtime.
+This package only ships schema assets and a small access API. It does not implement transport, request handling, or a
+higher-level GABP runtime.

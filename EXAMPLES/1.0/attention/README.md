@@ -9,5 +9,4 @@ The examples demonstrate a minimal bridge flow:
 3. Explicitly acknowledge the attention item.
 4. Observe that no current attention item remains open.
 
-These examples are intentionally summarized. They demonstrate control flow, not
-full diagnostics transport.
+These examples are intentionally summarized. They demonstrate control flow, not full diagnostics transport.

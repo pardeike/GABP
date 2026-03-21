@@ -5,11 +5,12 @@ This directory contains the normative specification documents for GABP (Game Age
 ## Specification Documents
 
 - **[gabp.md](gabp.md)** - Core protocol specification (wire format, methods, errors)
-- **[transport.md](transport.md)** - Transport layer details (framing, connections, loopback)  
+- **[transport.md](transport.md)** - Transport layer details (framing, connections, loopback)
 - **[security.md](security.md)** - Security model and threat analysis
 - **[registry.md](registry.md)** - Method names, error codes, and URI schemes
 - **[wire-model-decisions.md](wire-model-decisions.md)** - Canonical 1.0 wire-model decisions
-- **[attention-and-execution-gating-architecture.md](attention-and-execution-gating-architecture.md)** - Cross-repository architecture and rollout note for additive `gabp/1` attention and execution gating
+- **[attention-and-execution-gating-architecture.md](attention-and-execution-gating-architecture.md)** -
+  Cross-repository architecture and rollout note for additive `gabp/1` attention and execution gating
 - **[ai-implementation.md](ai-implementation.md)** - AI implementer guide with prompts and patterns
 
 ## Reading Order
@@ -17,11 +18,12 @@ This directory contains the normative specification documents for GABP (Game Age
 For implementers, we recommend reading the documents in this order:
 
 1. **gabp.md** - Start here to understand the basic message format and core methods
-2. **transport.md** - Learn how messages are sent over the wire  
+2. **transport.md** - Learn how messages are sent over the wire
 3. **security.md** - Understand the security model and authentication
 4. **registry.md** - Reference for method names, error codes, and extensibility rules
 5. **wire-model-decisions.md** - Canonical naming and field decisions for 1.0
-6. **attention-and-execution-gating-architecture.md** - Design note and execution playbook for additive attention-aware execution gating
+6. **attention-and-execution-gating-architecture.md** - Design note and execution playbook for additive attention-aware
+   execution gating
 7. **ai-implementation.md** - AI-specific implementation guidance (for AI-assisted development)
 
 ## Implementation Requirements
@@ -58,6 +60,5 @@ GABP 1.0 allows extensions through:
 
 Extensions MUST NOT conflict with core protocol behavior and SHOULD follow the patterns established by standard methods.
 
-Optional attention support remains part of the core reserved namespace surface
-within `gabp/1`, but implementations still discover it through capabilities
-rather than assuming it is always present.
+Optional attention support remains part of the core reserved namespace surface within `gabp/1`, but implementations
+still discover it through capabilities rather than assuming it is always present.

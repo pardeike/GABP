@@ -1,6 +1,7 @@
 # Event Examples
 
-This directory contains examples of GABP event subscription and event messages. Events allow the mod to notify the bridge about things happening in the game.
+This directory contains examples of GABP event subscription and event messages. Events allow the mod to notify the
+bridge about things happening in the game.
 
 ## Files
 
@@ -12,12 +13,13 @@ This directory contains examples of GABP event subscription and event messages. 
 Events use a publish-subscribe pattern:
 
 1. **Bridge → Mod**: `events/subscribe` request with channel patterns
-2. **Mod → Bridge**: `events/subscribe` response confirming subscriptions  
+2. **Mod → Bridge**: `events/subscribe` response confirming subscriptions
 3. **Mod → Bridge**: Event messages whenever subscribed events occur
 
 ## Event Message Structure
 
 Event messages differ from request/response messages:
+
 - **type** is always `"event"`
 - **channel** identifies the event type (e.g., "player/move", "world/block_change")
 - **seq** is a sequence number for ordering
@@ -27,6 +29,7 @@ Event messages differ from request/response messages:
 ## Common Event Channels
 
 Events are organized by what they monitor:
+
 - **player/** - Player actions (move, attack, chat, etc.)
 - **world/** - World changes (block placement, weather, time)
 - **inventory/** - Inventory modifications
@@ -36,6 +39,7 @@ Events are organized by what they monitor:
 ## Event Filtering
 
 When subscribing, you can use patterns to filter events:
+
 - `"player/*"` - All player events
 - `"world/block_*"` - All block-related world events
 - `"player/move"` - Only player movement events
@@ -47,7 +51,7 @@ To stop receiving events, use `events/unsubscribe`:
 ```json
 {
   "v": "gabp/1",
-  "id": "uuid-here", 
+  "id": "uuid-here",
   "type": "request",
   "method": "events/unsubscribe",
   "params": {
@@ -59,6 +63,7 @@ To stop receiving events, use `events/unsubscribe`:
 ## Validation
 
 These examples validate against:
+
 - `../../../SCHEMA/1.0/envelope.schema.json`
 - `../../../SCHEMA/1.0/methods/events.subscribe.request.json`
 - `../../../SCHEMA/1.0/events/event.message.json`

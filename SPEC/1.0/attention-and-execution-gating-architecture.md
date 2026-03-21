@@ -2,11 +2,14 @@
 
 **Status**: Non-normative architecture note  
 **Target**: Additive `gabp/1` extension, expected as a repository minor release in the `1.x` line  
-**Purpose**: Preserve the reasoning, terminology, and build order for attention-aware execution gating across GABP, Lib.GAB, GABS, and game integrations such as RimBridgeServer. Although stored here for now, this note is intended as shared cross-repository working memory rather than protocol-only specification text.
+**Purpose**: Preserve the reasoning, terminology, and build order for attention-aware execution gating across GABP,
+Lib.GAB, GABS, and game integrations such as RimBridgeServer. Although stored here for now, this note is intended as
+shared cross-repository working memory rather than protocol-only specification text.
 
 ## 1. Why This Note Exists
 
-Normal request and tool errors already cover one important case: a bridge calls something, the mod fails it in-band, and the bridge receives that failure directly in the response.
+Normal request and tool errors already cover one important case: a bridge calls something, the mod fails it in-band, and
+the bridge receives that failure directly in the response.
 
 That is not enough for AI-driven game automation.
 
@@ -17,7 +20,9 @@ In practice, a tool can return a success result while the game:
 - disconnects, stalls, or enters a long event after the bridge thinks the action succeeded
 - produces repeated warning or error lines that matter operationally but should not be dumped verbatim into the model
 
-When that happens, an AI agent often continues with its plan because the last direct request-response pair looked successful. The result is stale-state wandering: the agent can perform many follow-up reads or writes against a game state that is no longer trustworthy.
+When that happens, an AI agent often continues with its plan because the last direct request-response pair looked
+successful. The result is stale-state wandering: the agent can perform many follow-up reads or writes against a game
+state that is no longer trustworthy.
 
 This note records the design direction chosen to address that failure mode.
 
@@ -26,10 +31,13 @@ This note records the design direction chosen to address that failure mode.
 The design must solve all of the following problems at once:
 
 1. Important game-side information must reach the bridge quickly enough to affect the next decision.
-2. The bridge must not depend on raw asynchronous notifications alone, because the host may not inject them into the model's active reasoning loop in time.
+2. The bridge must not depend on raw asynchronous notifications alone, because the host may not inject them into the
+   model's active reasoning loop in time.
 3. The system must not flood the bridge or the model with raw logs during error bursts.
-4. The system must preserve causality when possible. A later burst of spam must not erase the association between an action and the important state change it triggered.
-5. Tool vendors should not need to hand-build protocol logic for every tool. Most integrations should get the mechanism "for free" from shared runtime layers.
+4. The system must preserve causality when possible. A later burst of spam must not erase the association between an
+   action and the important state change it triggered.
+5. Tool vendors should not need to hand-build protocol logic for every tool. Most integrations should get the mechanism
+   "for free" from shared runtime layers.
 
 ## 3. Goals
 
@@ -58,13 +66,15 @@ Reasons:
 
 - GABP already supports normal request errors.
 - Raw logs are diagnostics, not control signals.
-- The new behavior is specifically about game-side information that can invalidate an agent's assumptions and therefore should influence execution ordering.
+- The new behavior is specifically about game-side information that can invalidate an agent's assumptions and therefore
+  should influence execution ordering.
 
 Using a distinct concept keeps three semantics separate:
 
 1. **Request failure**: the specific method call failed in-band.
 2. **Diagnostics**: logs, operation journals, and detailed debugging evidence.
-3. **Attention**: important state that the bridge should surface and potentially gate on before allowing more game-bound calls.
+3. **Attention**: important state that the bridge should surface and potentially gate on before allowing more game-bound
+   calls.
 
 ## 6. Versioning Decision
 
@@ -74,10 +84,12 @@ That means:
 
 - the wire version stays `gabp/1`
 - the change is additive and backward compatible at the protocol level
-- schema and spec assets remain in the `1.0` tree unless the repository later chooses a different `1.x` publication layout
+- schema and spec assets remain in the `1.0` tree unless the repository later chooses a different `1.x` publication
+  layout
 - repository releases advance by SemVer minor version
 
-This repository's current versioning policy already allows new optional fields, methods, event channels, and capabilities within `gabp/1`. Attention fits that model.
+This repository's current versioning policy already allows new optional fields, methods, event channels, and
+capabilities within `gabp/1`. Attention fits that model.
 
 ## 7. Architectural Model
 
@@ -104,11 +116,13 @@ The diagnostics plane carries or exposes high-volume evidence:
 - stack traces
 - correlated history
 
-This plane is not what should directly drive model behavior. It exists so the bridge or agent can inspect details after attention has been surfaced.
+This plane is not what should directly drive model behavior. It exists so the bridge or agent can inspect details after
+attention has been surfaced.
 
 ### 7.3 Design Consequence
 
-The bridge should never need to treat raw log lines as the primary control signal. It should consume a compact attention state and only fetch diagnostics when needed.
+The bridge should never need to treat raw log lines as the primary control signal. It should consume a compact attention
+state and only fetch diagnostics when needed.
 
 ## 8. Responsibility Split
 
@@ -156,7 +170,9 @@ The bridge layer, such as GABS, enforces behavior:
 
 Blocking only mutating calls is not sufficient.
 
-If important game-side information says the current state is no longer trustworthy, the model should not continue issuing many read calls either. The bridge should gate **all game-bound calls for that game** while blocking attention is open, except for an explicit allowlist.
+If important game-side information says the current state is no longer trustworthy, the model should not continue
+issuing many read calls either. The bridge should gate **all game-bound calls for that game** while blocking attention
+is open, except for an explicit allowlist.
 
 Typical allowlisted calls will include bridge diagnostics such as:
 
@@ -169,11 +185,13 @@ Typical allowlisted calls will include bridge diagnostics such as:
 
 Attention events should still be pushed asynchronously for low-latency visibility.
 
-However, the authoritative control mechanism is the bridge-side gate at the next game-bound call boundary. This avoids depending on the AI host to immediately inject asynchronous notifications into the model's active plan.
+However, the authoritative control mechanism is the bridge-side gate at the next game-bound call boundary. This avoids
+depending on the AI host to immediately inject asynchronous notifications into the model's active plan.
 
 ### 9.3 Early Capture, Late Rendering
 
-Important information should be captured early and stored in a bounded state machine, but rendered to the model late and compactly.
+Important information should be captured early and stored in a bounded state machine, but rendered to the model late and
+compactly.
 
 That means:
 
@@ -218,8 +236,10 @@ The protocol and runtime should preserve whether a blocked call actually execute
 
 Required distinction:
 
-- if blocking attention is already open before dispatch, the bridge should block the call and report that it was not executed
-- if attention opens during or immediately after execution, the bridge should return the real tool result and attach or reference the related attention item
+- if blocking attention is already open before dispatch, the bridge should block the call and report that it was not
+  executed
+- if attention opens during or immediately after execution, the bridge should return the real tool result and attach or
+  reference the related attention item
 
 The system should never claim that a mutating call "did not execute" if it in fact already ran.
 
@@ -277,7 +297,8 @@ Recommended canonical channels:
 - `attention/updated`
 - `attention/cleared`
 
-An implementation MAY collapse these into a smaller event surface if needed, but explicit lifecycle channels are easier to reason about and test.
+An implementation MAY collapse these into a smaller event surface if needed, but explicit lifecycle channels are easier
+to reason about and test.
 
 ### 10.4 Attention Object Shape
 
@@ -336,7 +357,9 @@ The ideal experience is:
 - the integration layer or Lib.GAB runtime decides what events and logs should open attention
 - only advanced integrations supply a custom attention classifier or summary policy
 
-The one thing intentionally deferred is a public cross-mod API for third-party tools or mods to publish first-class attention items directly. The current rollout keeps attention ownership centralized in the integration layer until that extension surface is designed more deliberately.
+The one thing intentionally deferred is a public cross-mod API for third-party tools or mods to publish first-class
+attention items directly. The current rollout keeps attention ownership centralized in the integration layer until that
+extension surface is designed more deliberately.
 
 ## 12. Implementation Guidance By Layer
 
@@ -400,9 +423,11 @@ That leads to the following guidance:
 - treat richer output metadata as an optional ergonomics improvement
 - avoid overloading the main tool description with too much return-shape detail when a better metadata slot is available
 
-Because this note spans Lib.GAB, RimBridgeServer, and related annotation/doc-generation layers in addition to GABP itself, it is reasonable to record adjacent implementation guidance here when it helps prevent design drift.
+Because this note spans Lib.GAB, RimBridgeServer, and related annotation/doc-generation layers in addition to GABP
+itself, it is reasonable to record adjacent implementation guidance here when it helps prevent design drift.
 
-One such adjacent improvement is an optional free-text result description, which is a reasonable additive design when an implementation wants better semantic separation without requiring full field-level response schemas everywhere.
+One such adjacent improvement is an optional free-text result description, which is a reasonable additive design when an
+implementation wants better semantic separation without requiring full field-level response schemas everywhere.
 
 That field would be intended for short semantic return affordances such as:
 
@@ -415,21 +440,27 @@ Recommended rules:
 - keep the main tool description focused on what the tool does and when to use it
 - keep any result description focused on what a successful result means or enables next
 - keep field-level schema annotations optional and independent
-- when both exist, prefer rendering result description as a `Returns` section in human-facing docs and as the root `description` of any emitted `outputSchema`
+- when both exist, prefer rendering result description as a `Returns` section in human-facing docs and as the root
+  `description` of any emitted `outputSchema`
 
 Additional guidance:
 
-- if a shared runtime already supports field-level response metadata such as `ToolResponse`, treat a result description as complementary rather than as a replacement
-- if one implementation prefers source generators or typed DTO reflection to populate response metadata, that is an authoring convenience, not a protocol requirement
-- if generated docs currently render only descriptions and parameters, that documentation gap is a valid reason to add a result-description field without treating it as a full output-schema redesign
+- if a shared runtime already supports field-level response metadata such as `ToolResponse`, treat a result description
+  as complementary rather than as a replacement
+- if one implementation prefers source generators or typed DTO reflection to populate response metadata, that is an
+  authoring convenience, not a protocol requirement
+- if generated docs currently render only descriptions and parameters, that documentation gap is a valid reason to add a
+  result-description field without treating it as a full output-schema redesign
 
 This is complementary to attention support, not part of the minimum protocol work required to deliver execution gating.
 
 The likely implementation homes for that follow-on are:
 
 - `Lib.GAB`, if the shared tool attribute model should grow a result-description field
-- `RimBridgeServer.Annotations`, if the lightweight shared annotation package should expose the same field to third-party mod authors
-- RimBridgeServer documentation generators, if human-facing tool references should render a separate `Returns` section instead of forcing that information into the main description
+- `RimBridgeServer.Annotations`, if the lightweight shared annotation package should expose the same field to
+  third-party mod authors
+- RimBridgeServer documentation generators, if human-facing tool references should render a separate `Returns` section
+  instead of forcing that information into the main description
 
 ## 13. Ordered Build Plan
 
@@ -614,7 +645,8 @@ Validation:
 Deliverables:
 
 - decide whether `Lib.GAB` and `RimBridgeServer.Annotations` should expose an optional result-description field
-- update RimBridgeServer and similar human-facing doc generators to render a separate `Returns` section when that field exists
+- update RimBridgeServer and similar human-facing doc generators to render a separate `Returns` section when that field
+  exists
 - optionally map that text to the root `description` of emitted `outputSchema` objects
 - keep field-level response metadata such as `ToolResponse` optional
 
@@ -636,7 +668,8 @@ The intended repositories are:
 - `RimBridgeServer`
 - `GABS`
 
-The goal is not to update all of them blindly at once. The goal is to move them in an order that keeps every stage testable and keeps context loss manageable.
+The goal is not to update all of them blindly at once. The goal is to move them in an order that keeps every stage
+testable and keeps context loss manageable.
 
 ### 14.1 GABP Workstream
 
@@ -670,7 +703,8 @@ Concrete tasks:
   - acknowledgement clearing the gate
   - a blocked follow-up call referencing the same `attentionId`
 - add conformance fixtures for valid and invalid payloads
-- update AI-facing guidance so bridge and host implementers know that async push is informative but the call gate is authoritative
+- update AI-facing guidance so bridge and host implementers know that async push is informative but the call gate is
+  authoritative
 
 Exit criteria:
 
@@ -724,7 +758,8 @@ Exit criteria:
 
 Primary purpose:
 
-- keep the lightweight shared annotation package aligned with any additive metadata improvements chosen for tool documentation
+- keep the lightweight shared annotation package aligned with any additive metadata improvements chosen for tool
+  documentation
 
 Likely touchpoints:
 
@@ -1036,7 +1071,8 @@ Evidence:
 
 ### 16.1 Practical Verification Entry Points
 
-The exact CI wiring may evolve, but the current repository surfaces already suggest these concrete verification entry points:
+The exact CI wiring may evolve, but the current repository surfaces already suggest these concrete verification entry
+points:
 
 - `GABP`
   - run schema and example validation from the existing schema package and conformance assets
@@ -1100,9 +1136,11 @@ Every repository needs some documentation work, not only code changes.
 
 ## 18. Session Handoff And Restart Safety
 
-This note is intended to survive context loss. A fresh session is safe once the current checkpoint is recorded clearly enough.
+This note is intended to survive context loss. A fresh session is safe once the current checkpoint is recorded clearly
+enough.
 
-Before ending work on any day or before intentionally starting a new session, update this note or an adjacent tracking artifact with:
+Before ending work on any day or before intentionally starting a new session, update this note or an adjacent tracking
+artifact with:
 
 - the highest completed checkpoint
 - the next intended checkpoint
@@ -1113,7 +1151,8 @@ Before ending work on any day or before intentionally starting a new session, up
 
 Minimum safe handoff rule:
 
-- if another session can read this note plus the touched repository diffs and continue without relying on hidden chat context, the handoff is good enough
+- if another session can read this note plus the touched repository diffs and continue without relying on hidden chat
+  context, the handoff is good enough
 
 Practical rule:
 
@@ -1142,4 +1181,5 @@ The recommended direction is:
 - sequence the rollout so every repository change is locally testable before the next layer depends on it
 - keep richer output metadata optional and secondary to the core reliability work
 
-That gives AI systems a reliable way to stop and reconsider when important game-side information appears, without turning the protocol into a raw log transport or forcing every tool vendor to implement custom protocol behavior.
+That gives AI systems a reliable way to stop and reconsider when important game-side information appears, without
+turning the protocol into a raw log transport or forcing every tool vendor to implement custom protocol behavior.

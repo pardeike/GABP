@@ -138,7 +138,7 @@ jobs:
     - name: Lint Markdown files
       run: |
         echo "Linting Markdown files..."
-        markdownlint README.md SPEC/1.0/*.md --config .markdownlint.json || true
+        markdownlint $(git ls-files '*.md') --config .markdownlint.json
         
   check-file-structure:
     runs-on: ubuntu-latest

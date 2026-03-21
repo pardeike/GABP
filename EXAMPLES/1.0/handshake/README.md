@@ -1,6 +1,7 @@
 # Handshake Examples
 
-This directory contains examples of the GABP session handshake process - the initial exchange between a bridge (client) and mod (server) to establish a connection.
+This directory contains examples of the GABP session handshake process - the initial exchange between a bridge (client)
+and mod (server) to establish a connection.
 
 ## Files
 
@@ -16,13 +17,15 @@ The handshake is always initiated by the bridge and follows this pattern:
 
 ## Key Information Exchanged
 
-### In session/hello (Bridge → Mod):
+### In session/hello (Bridge → Mod)
+
 - **token** - Authentication token for security
 - **bridgeVersion** - Version of the bridge software
 - **platform** - Operating system (windows, macos, linux)
 - **launchId** - Unique identifier for this game session
 
-### In session/welcome (Mod → Bridge):
+### In session/welcome (Mod → Bridge)
+
 - **agentId** - Unique identifier for this mod instance
 - **app** - Game information (name and version)
 - **capabilities** - Available methods, events, and resources
@@ -31,6 +34,7 @@ The handshake is always initiated by the bridge and follows this pattern:
 ## What Happens Next
 
 After a successful handshake, the bridge can:
+
 - List available tools with `tools/list`
 - Subscribe to events with `events/subscribe`
 - List available resources with `resources/list`
@@ -39,6 +43,7 @@ After a successful handshake, the bridge can:
 ## Validation
 
 These examples validate against:
+
 - `../../../SCHEMA/1.0/envelope.schema.json`
 - `../../../SCHEMA/1.0/methods/session.hello.request.json`
 - `../../../SCHEMA/1.0/methods/session.welcome.response.json`

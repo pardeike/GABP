@@ -2,7 +2,8 @@
 
 ## Your Mission
 
-You are working on the **GABP (Game Agent Bridge Protocol)** repository. This protocol enables AI tools to communicate with games through a standardized bridge interface.
+You are working on the **GABP (Game Agent Bridge Protocol)** repository. This protocol enables AI tools to communicate
+with games through a standardized bridge interface.
 
 Your job is to implement and maintain the complete GABP specification, which consists of three main deliverables:
 
@@ -10,7 +11,8 @@ Your job is to implement and maintain the complete GABP specification, which con
 2. **Machine-readable schemas** (JSON Schema files)
 3. **Conformance tests** (Example messages and validation)
 
-This repository follows industry standards: Markdown + JSON Schema for specifications, optional AsyncAPI for events, and CI workflows that validate all examples.
+This repository follows industry standards: Markdown + JSON Schema for specifications, optional AsyncAPI for events, and
+CI workflows that validate all examples.
 
 ## Repository Overview
 
@@ -113,14 +115,17 @@ See [SPEC/1.0/gabp.md](SPEC/1.0/gabp.md) for normative protocol details.
 ### Envelope Specification
 
 Canonical specification and schema can be found at:
+
 - [SCHEMA/1.0/envelope.schema.json](SCHEMA/1.0/envelope.schema.json)
 
-The envelope schema defines the union types for requests, responses, and events. Consult the file directly for up-to-date structure and requirements.
+The envelope schema defines the union types for requests, responses, and events. Consult the file directly for
+up-to-date structure and requirements.
 
 ### Method Schemas
 
 All method schemas are maintained in the [SCHEMA/1.0/methods/](SCHEMA/1.0/methods/) directory.  
 For example:
+
 - [session.hello.request.json](SCHEMA/1.0/methods/session.hello.request.json)
 - [session.welcome.response.json](SCHEMA/1.0/methods/session.welcome.response.json)
 
@@ -128,8 +133,10 @@ Refer to these files for current field requirements and formats.
 
 ### Common Schemas
 
-Reusable schema definitions (such as `tool`, `capabilities`, and `error`) are in [SCHEMA/1.0/common/](SCHEMA/1.0/common/).  
+Reusable schema definitions (such as `tool`, `capabilities`, and `error`) are in
+[SCHEMA/1.0/common/](SCHEMA/1.0/common/).
 See:
+
 - [tool.schema.json](SCHEMA/1.0/common/tool.schema.json)
 - [error.schema.json](SCHEMA/1.0/common/error.schema.json)
 - [capabilities.schema.json](SCHEMA/1.0/common/capabilities.schema.json)
@@ -140,12 +147,14 @@ Event message schemas are in [SCHEMA/1.0/events/](SCHEMA/1.0/events/).
 
 ## AsyncAPI Implementation (Optional)
 
-If AsyncAPI documentation is provided, refer to the canonical file (e.g. `asyncapi.yaml`) at the root or docs directory for the latest event channel definitions.
+If AsyncAPI documentation is provided, refer to the canonical file (e.g. `asyncapi.yaml`) at the root or docs directory
+for the latest event channel definitions.
 
 ## Transport and Security Specifications
 
 See [SPEC/1.0/transport.md](SPEC/1.0/transport.md) for details.  
-Platform-specific bridge configuration examples are kept in the documentation and config files—refer to those for current formats.
+Platform-specific bridge configuration examples are kept in the documentation and config files—refer to those for
+current formats.
 
 ## Versioning Policy
 
@@ -159,8 +168,10 @@ Always refer to the workflow file for current validation logic.
 ## Conformance Test Suite
 
 Valid and invalid examples are maintained in:
+
 - [EXAMPLES/1.0/](EXAMPLES/1.0/) for protocol message examples
-- [CONFORMANCE/1.0/valid/](CONFORMANCE/1.0/valid/) and [CONFORMANCE/1.0/invalid/](CONFORMANCE/1.0/invalid/) for conformance testing
+- [CONFORMANCE/1.0/valid/](CONFORMANCE/1.0/valid/) and [CONFORMANCE/1.0/invalid/](CONFORMANCE/1.0/invalid/) for
+  conformance testing
 
 Consult these folders for up-to-date cases.
 
@@ -175,7 +186,7 @@ See [packages/js/gabp-schemas/README.md](packages/js/gabp-schemas/README.md) for
 ## Release Process Checklist
 
 1. **Freeze** SPEC/1.0 content
-2. **Tag** repository with `v1.0.0`
+2. **Tag** repository with `vX.Y.Z`
 3. **Create** GitHub Release bundling `/SCHEMA/1.0` and `/EXAMPLES/1.0`
 4. **Announce** registry and contribution rules
 

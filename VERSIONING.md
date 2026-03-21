@@ -1,6 +1,7 @@
 # GABP Versioning Policy
 
-This document describes the versioning strategy for the Game Agent Bridge Protocol (GABP) specification and related components.
+This document describes the versioning strategy for the Game Agent Bridge Protocol (GABP) specification and related
+components.
 
 ## Protocol Versioning
 
@@ -19,6 +20,7 @@ The wire protocol version is communicated in the `v` field of all GABP messages:
 Within `gabp/1`, only **additive changes** are allowed:
 
 **Allowed Changes**:
+
 - New optional fields in existing message types
 - New methods in existing or new namespaces
 - New event channels
@@ -27,6 +29,7 @@ Within `gabp/1`, only **additive changes** are allowed:
 - Clarifications and documentation improvements
 
 **Breaking Changes** (require gabp/2):
+
 - Removing or renaming existing fields
 - Changing field types or constraints
 - Removing existing methods
@@ -49,6 +52,7 @@ The GABP repository uses [Semantic Versioning](https://semver.org/) for releases
 #### MAJOR Version
 
 Incremented for:
+
 - Breaking changes to wire protocol (new `gabp/<major>` version)
 - Breaking changes to core schemas
 - Removal of deprecated features
@@ -58,6 +62,7 @@ Incremented for:
 #### MINOR Version
 
 Incremented for:
+
 - New features added in backward-compatible manner
 - New methods or capabilities
 - New documentation sections
@@ -68,6 +73,7 @@ Incremented for:
 #### PATCH Version
 
 Incremented for:
+
 - Bug fixes
 - Documentation clarifications
 - Schema corrections that don't change semantics
@@ -128,7 +134,7 @@ JSON Schemas use the repository version in their `$id`:
 
 ### Schema Directory Structure
 
-```
+```text
 SCHEMA/
 ├── 1.0/          # Major version 1, all minor versions
 ├── 2.0/          # Major version 2 (future)
@@ -223,7 +229,6 @@ Version changes require:
   - Enhanced security model
   - Improved performance features
   - Extended capability system
-  
 - **Extension Points**: Designed for future expansion
   - Custom method namespaces
   - Extension capability negotiation
@@ -238,4 +243,5 @@ Version planning includes:
 - Performance and usability studies
 - Industry standard alignment
 
-This versioning policy ensures GABP evolution remains predictable, backward-compatible within major versions, and responsive to community needs.
+This versioning policy ensures GABP evolution remains predictable, backward-compatible within major versions, and
+responsive to community needs.

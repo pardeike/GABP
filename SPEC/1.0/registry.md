@@ -1,12 +1,14 @@
 # GABP 1.0 Registry Specification
 
-**Version**: 1.0  
-**Status**: Draft  
-**Date**: 2025-01-02
+**Version**: 1.0<br>
+**Status**: Stable<br>
+**Date**: 2026-03-21
 
 ## Abstract
 
-This document defines the method registry, error code assignments, and URI scheme for GABP (Game Agent Bridge Protocol). It establishes naming conventions and reserved ranges to ensure interoperability and prevent conflicts between implementations.
+This document defines the method registry, error code assignments, and URI scheme for GABP (Game Agent Bridge Protocol).
+It establishes naming conventions and reserved ranges to ensure interoperability and prevent conflicts between
+implementations.
 
 ## 1. Method Names
 
@@ -21,6 +23,7 @@ Method names MUST follow the pattern `^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$`:
 - No leading or trailing slashes
 
 **Valid Examples**:
+
 - `session/hello`
 - `tools/list`
 - `world/block/get`
@@ -29,6 +32,7 @@ Method names MUST follow the pattern `^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$`:
 - `game-v2/world/set_chunk`
 
 **Invalid Examples**:
+
 - `sessionHello` (missing slash)
 - `tools` (single segment)
 - `tools/list/` (trailing slash)
@@ -40,44 +44,54 @@ Method names MUST follow the pattern `^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$`:
 
 The following top-level namespaces are reserved for core GABP functionality:
 
-#### session/*
+#### session/\*
+
 Session management and connection lifecycle.
 
 **Reserved Methods**:
+
 - `session/hello` - Initialize connection with authentication
 - `session/welcome` - Acknowledge successful authentication
 - `session/ping` - Keep-alive message
 - `session/goodbye` - Graceful connection termination
 
-#### tools/*
+#### tools/\*
+
 Tool discovery, metadata retrieval, and invocation.
 
 **Reserved Methods**:
+
 - `tools/list` - List available tools
 - `tools/get` - Get tool metadata
 - `tools/call` - Invoke a specific tool
 
-#### events/*
+#### events/\*
+
 Event subscription and management.
 
 **Reserved Methods**:
+
 - `events/subscribe` - Subscribe to event channels
 - `events/unsubscribe` - Unsubscribe from event channels
 - `events/list` - List available event channels
 
-#### resources/*
+#### resources/\*
+
 Resource discovery and access.
 
 **Reserved Methods**:
+
 - `resources/list` - List available resources
 - `resources/read` - Read resource content
 - `resources/write` - Write resource content (if supported)
 - `resources/watch` - Subscribe to resource changes
 
-#### attention/*
+#### attention/\*
+
 Attention inspection and acknowledgement for important summarized game-side state.
 
 **Reserved Methods**:
+
 - `attention/current` - Get the current open attention item, if any
 - `attention/ack` - Explicitly acknowledge a specific attention item
 
@@ -86,11 +100,13 @@ Attention inspection and acknowledgement for important summarized game-side stat
 Implementations MAY define custom methods using implementation-specific namespaces:
 
 **Recommended Patterns**:
+
 - `minecraft/world/get_blocks` - Game-specific methods
-- `forge/mod/reload` - Framework-specific methods  
+- `forge/mod/reload` - Framework-specific methods
 - `custom/analytics/track` - Implementation-specific methods
 
 **Namespace Allocation Guidelines**:
+
 - Use descriptive, unique top-level namespaces
 - Avoid conflicts with reserved namespaces
 - Document custom methods in implementation guides
@@ -98,8 +114,7 @@ Implementations MAY define custom methods using implementation-specific namespac
 
 ### 1.4 Event Channel Names
 
-Event channels SHOULD follow the same slash-separated lowercase native naming
-style used by methods and tool names:
+Event channels SHOULD follow the same slash-separated lowercase native naming style used by methods and tool names:
 
 ```text
 ^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$
@@ -107,8 +122,7 @@ style used by methods and tool names:
 
 #### Reserved Event Channels
 
-The following core channels are reserved for additive attention support within
-`gabp/1`:
+The following core channels are reserved for additive attention support within `gabp/1`:
 
 - `attention/opened`
 - `attention/updated`
@@ -116,23 +130,24 @@ The following core channels are reserved for additive attention support within
 
 ### 1.5 Tool Names
 
-Tool names are not protocol methods, but they use the same native slash-separated
-namespace style on the wire.
+Tool names are not protocol methods, but they use the same native slash-separated namespace style on the wire.
 
 Tool names MUST follow the pattern `^[a-z][a-z0-9_-]*(/[a-z][a-z0-9_-]*)+$`.
 
 **Valid Examples**:
+
 - `inventory/get`
 - `world/place_block`
 - `player/teleport`
 
 **Invalid Examples**:
+
 - `inventory.get` (dot-separated names are not canonical native GABP tool identifiers)
 - `inventory` (single segment)
 - `Inventory/get` (uppercase not allowed)
 
-Bridges MAY adapt native tool names for other ecosystems, but those adapted
-names are not the canonical GABP wire representation.
+Bridges MAY adapt native tool names for other ecosystems, but those adapted names are not the canonical GABP wire
+representation.
 
 ## 2. Error Codes
 
@@ -194,12 +209,14 @@ GABP uses JSON-RPC 2.0 error code ranges for compatibility:
 Implementations MAY define custom error codes outside the reserved ranges:
 
 **Available Ranges**:
+
 - **-31999 to -30000**: Available for custom errors
 - **-29999 to -10000**: Available for custom errors
 - **-9999 to -1**: Available for custom errors
 - **1 to 65535**: Available for custom errors
 
 **Guidelines**:
+
 - Document custom error codes in implementation guides
 - Use meaningful, descriptive error messages
 - Include relevant context in the `data` field
@@ -211,44 +228,53 @@ Implementations MAY define custom error codes outside the reserved ranges:
 
 GABP defines a URI scheme for resource identification:
 
-```
+```text
 gabp://<namespace>/<path>
 ```
 
 Where:
+
 - `namespace` identifies the resource provider or category
 - `path` is a hierarchical path to the specific resource
 
 ### 3.2 Reserved Namespaces
 
 #### system
+
 System-level resources and information.
 
 **Examples**:
+
 - `gabp://system/info` - System information
 - `gabp://system/config` - Configuration data
 - `gabp://system/logs` - Log files
 
 #### game
+
 Game-specific resources and state.
 
 **Examples**:
+
 - `gabp://game/world` - World data
 - `gabp://game/players` - Player information
 - `gabp://game/config` - Game configuration
 
 #### mod
+
 Mod-specific resources and state.
 
 **Examples**:
+
 - `gabp://mod/info` - Mod metadata
 - `gabp://mod/config` - Mod configuration
 - `gabp://mod/data` - Mod-specific data
 
 #### bridge
+
 Bridge-specific resources and state.
 
 **Examples**:
+
 - `gabp://bridge/session` - Session information
 - `gabp://bridge/stats` - Connection statistics
 - `gabp://bridge/logs` - Bridge logs
@@ -263,6 +289,7 @@ Resource paths SHOULD follow these conventions:
 - Avoid file extensions unless necessary for disambiguation
 
 **Examples**:
+
 - `gabp://game/world/chunks/0/0` - World chunk at coordinates (0,0)
 - `gabp://game/players/steve/inventory` - Player inventory
 - `gabp://mod/config/settings` - Mod configuration settings
@@ -271,11 +298,12 @@ Resource paths SHOULD follow these conventions:
 
 GABP URIs MAY include query parameters for filtering and options:
 
-```
+```text
 gabp://<namespace>/<path>?param1=value1&param2=value2
 ```
 
 **Common Parameters**:
+
 - `format` - Requested data format (json, xml, binary)
 - `version` - Specific version of the resource
 - `filter` - Filter criteria for collections
@@ -283,6 +311,7 @@ gabp://<namespace>/<path>?param1=value1&param2=value2
 - `offset` - Starting offset for paginated results
 
 **Examples**:
+
 - `gabp://game/players?limit=10&offset=20` - Paginated player list
 - `gabp://game/world/blocks?x=0&y=64&z=0&radius=10` - Blocks in region
 - `gabp://mod/data/items?format=json&version=2` - Items in JSON format
@@ -312,12 +341,12 @@ Mods MUST declare their capabilities in the `session/welcome` response:
 ### 4.2 Capability Fields
 
 - `methods` (array): List of supported method names
-- `events` (array): List of available event channels  
+- `events` (array): List of available event channels
 - `resources` (array): List of accessible resource URIs
 - `extensions` (object): Extension-specific capabilities
 
-Attention support, when implemented, MUST be discoverable through
-`capabilities.methods` and `capabilities.events` rather than by assumption.
+Attention support, when implemented, MUST be discoverable through `capabilities.methods` and `capabilities.events`
+rather than by assumption.
 
 ### 4.3 Dynamic Capabilities
 
@@ -366,11 +395,11 @@ Bridges SHOULD use capability negotiation rather than assumptions:
 ```javascript
 // Good: Check capabilities first
 if (capabilities.methods.includes("minecraft/world/get_blocks")) {
-    // Use minecraft-specific method
+  // Use minecraft-specific method
 } else if (capabilities.methods.includes("world/get_blocks")) {
-    // Use generic method
+  // Use generic method
 } else {
-    // Feature not available
+  // Feature not available
 }
 ```
 

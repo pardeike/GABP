@@ -1,6 +1,7 @@
 # Tool Examples
 
-This directory contains examples of GABP tool discovery and invocation. Tools are functions that the mod exposes to allow the bridge to interact with the game.
+This directory contains examples of GABP tool discovery and invocation. Tools are functions that the mod exposes to
+allow the bridge to interact with the game.
 
 ## Files
 
@@ -19,6 +20,7 @@ After completing the handshake, the bridge typically discovers available tools:
 ## Tool Definition Structure
 
 Each tool in the response includes:
+
 - **name** - Unique identifier for the tool (e.g., "inventory/get_items")
 - **title** - Human-readable name
 - **description** - What the tool does
@@ -34,7 +36,7 @@ Once you know what tools are available, you can call them using `tools/call`:
 {
   "v": "gabp/1",
   "id": "uuid-here",
-  "type": "request", 
+  "type": "request",
   "method": "tools/call",
   "params": {
     "name": "inventory/get_items",
@@ -48,6 +50,7 @@ Once you know what tools are available, you can call them using `tools/call`:
 ## Common Tool Categories
 
 Tools are typically organized by functionality:
+
 - **inventory/** - Player inventory management
 - **world/** - World manipulation (blocks, entities)
 - **player/** - Player actions and status
@@ -56,6 +59,7 @@ Tools are typically organized by functionality:
 ## Validation
 
 These examples validate against:
+
 - `../../../SCHEMA/1.0/envelope.schema.json`
 - `../../../SCHEMA/1.0/methods/tools.list.request.json`
 - `../../../SCHEMA/1.0/methods/tools.list.response.json`
